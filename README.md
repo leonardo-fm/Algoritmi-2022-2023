@@ -370,7 +370,6 @@ perpeteva
 squola
 domandrono
 vuolessi
-scrissi
 corpito
 wita
 ```
