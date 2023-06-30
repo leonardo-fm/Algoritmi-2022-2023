@@ -16,8 +16,19 @@ typedef enum {
 typedef struct {
     size_t nitems;
     int size;
-    Type type
+    Type type;
 } ArrayInfos;
+
+void save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
+ArrayInfos extract_data(void *base, char csvPath[], int columnNumber);
+Type get_value_type(char value[]);
+void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
+void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
+void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
+int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int low, int high, int (*compar)(const void*, const void*));
+void copy_array(const void *base, void *newArray, size_t nitems, size_t size);
+void swap(void *val1, void *val2, size_t size);
+int compar(const void *val1, const void *val2);
 
 int main(int argc, char *argv[]){
     if (argc != ARGUMENT_NUMBER) {
@@ -122,7 +133,7 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
                         ((double *)base)[i] = strtod(column, &ptr);
                         break;
                     case 2:
-                        ((int *)base)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
+                        ((char **)base)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
                         strcpy(base, column);
                         break;
                 }
@@ -186,22 +197,22 @@ void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nit
     int i = 0, j = 0;
     void *arr1val = (void *)malloc(size);
     void *arr2val = (void *)malloc(size);
-    memcopy(arr1val, arr1, size);
-    memcopy(arr2val, arr2, size);
+    memcpy(arr1val, arr1, size);
+    memcpy(arr2val, arr2, size);
     while (i < arr1Nitems || j < arr2Nitems) {
         int compareResult = compar(arr1val, arr2val);
         if (compareResult >= 0) {
             i++;
             unsigned char *basePointer = base;
-            memcopy(basePointer + ((i + j) * size), arr1val, size);
+            memcpy(basePointer + ((i + j) * size), arr1val, size);
             unsigned char *arrPointer = arr1;
-            memcopy(arr1val, arrPointer + (i * size), size);
+            memcpy(arr1val, arrPointer + (i * size), size);
         } else {
             j++;
             unsigned char *basePointer = base;
-            memcopy(basePointer + ((i + j) * size), arr2val, size);
+            memcpy(basePointer + ((i + j) * size), arr2val, size);
             unsigned char *arrPointer = arr2;
-            memcopy(arr2val, arrPointer + (j * size), size);
+            memcpy(arr2val, arrPointer + (j * size), size);
         }
     }
 
@@ -209,17 +220,17 @@ void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nit
         while (i < arr1Nitems || j < arr2Nitems) {
             i++;
             unsigned char *basePointer = base;
-            memcopy(basePointer + ((i + j) * size), arr1val, size);
+            memcpy(basePointer + ((i + j) * size), arr1val, size);
             unsigned char *arrPointer = arr1;
-            memcopy(arr1val, arrPointer + (i * size), size);
+            memcpy(arr1val, arrPointer + (i * size), size);
         }
     } else {
         while (i < arr1Nitems || j < arr2Nitems) {
             j++;
             unsigned char *basePointer = base;
-            memcopy(basePointer + ((i + j) * size), arr2val, size);
+            memcpy(basePointer + ((i + j) * size), arr2val, size);
             unsigned char *arrPointer = arr2;
-            memcopy(arr2val, arrPointer + (j * size), size);
+            memcpy(arr2val, arrPointer + (j * size), size);
         }
     }
     
@@ -232,13 +243,13 @@ void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)
     while (i < nitems) {
         void *arrVal = (void *)malloc(size);
         unsigned char *basePointer = base;
-        memcopy(arrVal, basePointer + (i * size), size);
+        memcpy(arrVal, basePointer + (i * size), size);
         int indexNewValue = binary_search(base, arrVal, i + 1, size, 0, i, compar);
         int j = i;
         while (j != indexNewValue) {
             void *arrCompVal = (void *)malloc(size);
             unsigned char *basePointer = base;
-            memcopy(arrCompVal, basePointer + (i - 1 * size), size);
+            memcpy(arrCompVal, basePointer + (i - 1 * size), size);
             swap(arrVal, arrCompVal, size);
             j--;
         }
@@ -252,7 +263,7 @@ int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int
     if (low == high) {
         void *arrVal = (void *)malloc(size);
         unsigned char *basePointer = searchArray;
-        memcopy(basePointer + (low * size), arrVal, size);
+        memcpy(basePointer + (low * size), arrVal, size);
         int compareResult = compar(arrVal, item);
         free(arrVal);
         return low + compareResult;
@@ -261,7 +272,7 @@ int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int
     int mid = nitems / 2;
     void *midArrVal = (void *)malloc(size);
     unsigned char *basePointer = searchArray;
-    memcopy(basePointer + (mid * size), midArrVal, size);
+    memcpy(basePointer + (mid * size), midArrVal, size);
     
     int compareResult = compar(midArrVal, item);
 
@@ -273,15 +284,15 @@ int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int
 }
 
 void copy_array(const void *base, void *newArray, size_t nitems, size_t size) {
-    memcopy(newArray, base, nitems * size);
+    memcpy(newArray, base, nitems * size);
 }
 
 // Swap 2 generic value given the size
 void swap(void *val1, void *val2, size_t size) {
     void *tmp = (void *) malloc(size);
-    memcopy(tmp, val1, size);
-    memcopy(val1, val2, size);
-    memcopy(val2, tmp, size);
+    memcpy(tmp, val1, size);
+    memcpy(val1, val2, size);
+    memcpy(val2, tmp, size);
     free(tmp);
 }
 
