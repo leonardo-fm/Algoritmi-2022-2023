@@ -1,7 +1,23 @@
 // $ ./main_ex1 /tmp/data/records.csv /tmp/data/sorted.csv 27 1 INPUT
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
-const int ARGUMENT_NUMBER = 5;
+#define ARGUMENT_NUMBER 5
+#define MAX_LINE_LENGTH 1000
+#define MAX_COLUMN_LENGTH 100
+
+typedef enum {
+    INT,
+    DOUBLE,
+    STRING
+} Type;
+
+typedef struct {
+    size_t nitems;
+    int size;
+    Type type
+} ArrayInfos;
 
 int main(int argc, char *argv[]){
     if (argc != ARGUMENT_NUMBER) {
@@ -9,8 +25,137 @@ int main(int argc, char *argv[]){
         return -1;
     }
 
-    printf("%s, %s, %s, %s", argv[1], argv[2], argv[3], argv[4]);
+    void *base = NULL;
+    ArrayInfos arrayInfos = extract_data(base, argv[1], atoi(argv[4]));
+    merge_binary_insertion_sort(base, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
+    save_data(base, arrayInfos, argv[2]);
+
     return 0;
+}
+
+void save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
+    FILE* file = fopen(fileOutputPath, "w");
+    if (file == NULL) {
+        printf("Failed to open the file.\n");
+        return;
+    }
+    
+    for (size_t i = 0; i < arrayInfos.nitems; i++) {
+        switch (arrayInfos.type)
+        {
+            case INT:
+                fprintf(file, "%i,", ((int *)base)[i]);
+                break;
+            case DOUBLE:
+                fprintf(file, "%d,", ((double *)base)[i]);
+                break;
+            case STRING:
+                fprintf(file, "%s,", ((char **)base)[i]);
+                break;
+        }
+    }
+
+    fclose(file);
+}
+
+// return the number of items in the array
+ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
+    FILE* file = fopen(csvPath, "r");
+    if (file == NULL) {
+        printf("Failed to open the file.\n");
+    }
+
+    size_t nitems = 0;
+    int size = 0;
+    
+    char line[MAX_LINE_LENGTH];
+    char column[MAX_COLUMN_LENGTH];
+    Type valueType;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (valueType == -1) {
+            char* token = strtok(line, ",");
+            int columnCount = 0;
+            while (token != NULL) {
+                if (columnCount == columnNumber) {
+                    strcpy(column, token);
+                    valueType = get_value_type(column);
+                    break;
+                }
+                token = strtok(NULL, ",");
+                columnCount++;
+            }
+        }
+
+        nitems++;
+    }
+
+    switch (valueType)
+    {
+        case INT:
+            base = (int *)malloc(sizeof(int) * nitems);
+            size = sizeof(int);
+            break;
+        case DOUBLE:
+            base = (double *)malloc(sizeof(double) * nitems);
+            size = sizeof(double);
+            break;
+        case STRING:
+            base = (char **)malloc(sizeof(char *) * nitems);
+            size = sizeof(char *);
+            break;
+    }
+
+    int i = 0;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        char* token = strtok(line, ",");
+        int columnCount = 0;
+        while (token != NULL) {
+            if (columnCount == columnNumber) {
+                strcpy(column, token);
+                switch (valueType)
+                {
+                    case 0:
+                        ((int *)base)[i] = atoi(column);
+                        break;
+                    case 1:
+                        char *ptr;
+                        ((double *)base)[i] = strtod(column, &ptr);
+                        break;
+                    case 2:
+                        ((int *)base)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
+                        strcpy(base, column);
+                        break;
+                }
+                break;
+            }
+            token = strtok(NULL, ","); // take next token
+            columnCount++;
+        }
+    }
+
+    fclose(file);
+
+    ArrayInfos arrayInfos;
+    arrayInfos.nitems = nitems;
+    arrayInfos.size = size;
+    arrayInfos.type = valueType;
+    return arrayInfos;
+}
+
+// Check the type of a string, 0 = int, 1 = double, 2 = string
+Type get_value_type(char value[]) {
+
+    int intValue;
+    double doubleValue;
+    char stringValue[100];
+
+    if (sscanf(value, "%d", &intValue) == 1) { // check int
+        return INT;
+    } else if (sscanf(value, "%lf", &doubleValue) == 1) { // check double
+        return DOUBLE;
+    } else { // string
+        return STRING;
+    }
 }
 
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*)){
@@ -141,13 +286,10 @@ void swap(void *val1, void *val2, size_t size) {
 }
 
 // val1 > val2 = 1, val1 < val2 = -1, val1 == val2 = 0
-int compar(const void *val1, const void *val2){
-    int intValue1 = (int)val1;
-    int intValue2 = (int)val2;
-
-    if (intValue1 > intValue2)
+int compar(const void *val1, const void *val2) {
+    if (*(int *)val1 > *(int *)val2)
         return 1;
-    else if (intValue1 < intValue2)
+    else if (*(int *)val1 < *(int *)val2)
         return -1;
     else
         return 0;
