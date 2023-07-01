@@ -15,13 +15,14 @@ typedef enum {
 } Type;
 
 typedef struct {
+    void *head;
     size_t nitems;
     int size;
     Type type;
 } ArrayInfos;
 
 int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
-ArrayInfos extract_data(void *base, char csvPath[], int columnNumber);
+ArrayInfos extract_data(char csvPath[], int columnNumber);
 Type get_value_type(char value[]);
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
 void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
@@ -38,23 +39,22 @@ int main(int argc, char *argv[]) {
     }
 
     printf("Extracting data from %s...\n", argv[1]);
-    void *base;
-    ArrayInfos arrayInfos = extract_data(&base, argv[1], atoi(argv[4]));
+    ArrayInfos arrayInfos = extract_data(argv[1], atoi(argv[4]));
     if (arrayInfos.nitems == -1) {
         printf("Error while extracting data\n");
         return -1;
     }
     printf("Extracted %i items, the size of each item is %i byts\n", arrayInfos.nitems, arrayInfos.size);
+
+    //merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
     
-    int response = save_data(base, arrayInfos, argv[2]);
+    printf("Start saving data...\n");
+    int response = save_data(arrayInfos.head, arrayInfos, argv[2]);
     if (response == -1) {
         printf("Error while saving data\n");
         return -1;
     }
-    return 0;
-    
-    merge_binary_insertion_sort(base, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
-    save_data(base, arrayInfos, argv[2]);
+    printf("Succesfully saived the data int the file: %s\n", argv[2]);
 
     return 0;
 }
@@ -65,22 +65,18 @@ int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
         printf("Failed to open the file.\n");
         return -1;
     }
-    
-    printf("%i\n", ((int *)base)[0]);
-
-    return 0;
 
     for (int i = 0; i < arrayInfos.nitems; i++) {
         switch (arrayInfos.type)
         {
             case INT:
-                fprintf(file, "%i,", ((int *)base)[i]);
+                fprintf(file, "%i\n", ((int *)base)[i]);
                 break;
             case DOUBLE:
-                fprintf(file, "%d,", ((double *)base)[i]);
+                fprintf(file, "%d\n", ((double *)base)[i]);
                 break;
             case STRING:
-                fprintf(file, "%s,", ((char **)base)[i]);
+                fprintf(file, "%s\n", ((char **)base)[i]);
                 break;
         }
     }
@@ -90,7 +86,7 @@ int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
 }
 
 // return the number of items in the array
-ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
+ArrayInfos extract_data(char csvPath[], int columnNumber) {
     ArrayInfos arrayInfos;
     FILE* file = fopen(csvPath, "r");
     if (file == NULL) {
@@ -127,15 +123,15 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
     switch (valueType)
     {
         case INT:
-            base = malloc(sizeof(int) * nitems);
+            arrayInfos.head = malloc(sizeof(int) * nitems);
             size = sizeof(int);
             break;
         case DOUBLE:
-            base = malloc(sizeof(double) * nitems);
+            arrayInfos.head = malloc(sizeof(double) * nitems);
             size = sizeof(double);
             break;
         case STRING:
-            base = malloc(sizeof(char *) * nitems);
+            arrayInfos.head = malloc(sizeof(char *) * nitems);
             size = sizeof(char *);
             break;
     }
@@ -150,17 +146,15 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
                 switch (valueType)
                 {
                     case INT:
-                        printf("base *= %i, base[%i] = %i, data[%i] = %i\n", 
-                            base, i, ((int *)base)[0], i, atoi(column));
-                        ((int *)base)[i] = atoi(column);
+                        ((int *)arrayInfos.head)[i] = atoi(column);
                         break;
                     case DOUBLE:
                         char *ptr;
-                        ((double *)base)[i] = strtod(column, &ptr);
+                        ((double *)arrayInfos.head)[i] = strtod(column, &ptr);
                         break;
                     case STRING:
-                        ((char **)base)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
-                        strcpy(base, column);
+                        ((char **)arrayInfos.head)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
+                        strcpy(arrayInfos.head, column);
                         break;
                 }
 
@@ -173,7 +167,6 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
     }
 
     fclose(file);
-
     arrayInfos.nitems = nitems;
     arrayInfos.size = size;
     arrayInfos.type = valueType;
