@@ -8,6 +8,7 @@
 #define MAX_COLUMN_LENGTH 100
 
 typedef enum {
+    NONE,
     INT,
     DOUBLE,
     STRING
@@ -19,7 +20,7 @@ typedef struct {
     Type type;
 } ArrayInfos;
 
-void save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
+int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
 ArrayInfos extract_data(void *base, char csvPath[], int columnNumber);
 Type get_value_type(char value[]);
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
@@ -30,28 +31,46 @@ void copy_array(const void *base, void *newArray, size_t nitems, size_t size);
 void swap(void *val1, void *val2, size_t size);
 int compar(const void *val1, const void *val2);
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
     if (argc != ARGUMENT_NUMBER) {
-        printf("Not enough arguments", argc);
+        printf("Not enough arguments %i\n", argc);
         return -1;
     }
 
-    void *base = NULL;
-    ArrayInfos arrayInfos = extract_data(base, argv[1], atoi(argv[4]));
+    printf("Extracting data from %s...\n", argv[1]);
+    void *base;
+    ArrayInfos arrayInfos = extract_data(&base, argv[1], atoi(argv[4]));
+    if (arrayInfos.nitems == -1) {
+        printf("Error while extracting data\n");
+        return -1;
+    }
+    printf("Extracted %i items, the size of each item is %i byts\n", arrayInfos.nitems, arrayInfos.size);
+    
+    int response = save_data(base, arrayInfos, argv[2]);
+    if (response == -1) {
+        printf("Error while saving data\n");
+        return -1;
+    }
+    return 0;
+    
     merge_binary_insertion_sort(base, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
     save_data(base, arrayInfos, argv[2]);
 
     return 0;
 }
 
-void save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
+int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
     FILE* file = fopen(fileOutputPath, "w");
     if (file == NULL) {
         printf("Failed to open the file.\n");
-        return;
+        return -1;
     }
     
-    for (size_t i = 0; i < arrayInfos.nitems; i++) {
+    printf("%i\n", ((int *)base)[0]);
+
+    return 0;
+
+    for (int i = 0; i < arrayInfos.nitems; i++) {
         switch (arrayInfos.type)
         {
             case INT:
@@ -67,13 +86,17 @@ void save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
     }
 
     fclose(file);
+    return 0;
 }
 
 // return the number of items in the array
 ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
+    ArrayInfos arrayInfos;
     FILE* file = fopen(csvPath, "r");
     if (file == NULL) {
         printf("Failed to open the file.\n");
+        arrayInfos.nitems = -1;
+        return arrayInfos;
     }
 
     size_t nitems = 0;
@@ -81,9 +104,9 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
     
     char line[MAX_LINE_LENGTH];
     char column[MAX_COLUMN_LENGTH];
-    Type valueType;
+    Type valueType = NONE;
     while (fgets(line, sizeof(line), file) != NULL) {
-        if (valueType == -1) {
+        if (valueType == NONE) {
             char* token = strtok(line, ",");
             int columnCount = 0;
             while (token != NULL) {
@@ -99,19 +122,20 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
 
         nitems++;
     }
+    fseek(file, 0, SEEK_SET);
 
     switch (valueType)
     {
         case INT:
-            base = (int *)malloc(sizeof(int) * nitems);
+            base = malloc(sizeof(int) * nitems);
             size = sizeof(int);
             break;
         case DOUBLE:
-            base = (double *)malloc(sizeof(double) * nitems);
+            base = malloc(sizeof(double) * nitems);
             size = sizeof(double);
             break;
         case STRING:
-            base = (char **)malloc(sizeof(char *) * nitems);
+            base = malloc(sizeof(char *) * nitems);
             size = sizeof(char *);
             break;
     }
@@ -125,18 +149,22 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
                 strcpy(column, token);
                 switch (valueType)
                 {
-                    case 0:
+                    case INT:
+                        printf("base *= %i, base[%i] = %i, data[%i] = %i\n", 
+                            base, i, ((int *)base)[0], i, atoi(column));
                         ((int *)base)[i] = atoi(column);
                         break;
-                    case 1:
+                    case DOUBLE:
                         char *ptr;
                         ((double *)base)[i] = strtod(column, &ptr);
                         break;
-                    case 2:
+                    case STRING:
                         ((char **)base)[i] = (char *)malloc((strlen(column) + 1) * sizeof(char));
                         strcpy(base, column);
                         break;
                 }
+
+                i++;
                 break;
             }
             token = strtok(NULL, ","); // take next token
@@ -146,7 +174,6 @@ ArrayInfos extract_data(void *base, char csvPath[], int columnNumber) {
 
     fclose(file);
 
-    ArrayInfos arrayInfos;
     arrayInfos.nitems = nitems;
     arrayInfos.size = size;
     arrayInfos.type = valueType;
@@ -305,4 +332,3 @@ int compar(const void *val1, const void *val2) {
     else
         return 0;
 }
-
