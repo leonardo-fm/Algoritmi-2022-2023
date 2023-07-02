@@ -27,7 +27,7 @@ Type get_value_type(char value[]);
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
 void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
 void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
-int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int low, int high, int (*compar)(const void*, const void*));
+int binary_search(void *searchArray, void *item, size_t size, int low, int high, int (*compar)(const void*, const void*));
 void copy_array(const void *base, void *newArray, size_t nitems, size_t size);
 void swap(void *val1, void *val2, size_t size);
 int compar(const void *val1, const void *val2);
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     }
     printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfos.nitems, arrayInfos.size);
 
-    merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
+    merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, atoi(argv[4]), compar);
     
     printf("Start saving data...\n");
     int response = save_data(arrayInfos.head, arrayInfos, argv[2]);
@@ -222,7 +222,6 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
         free(arr1);
         free(arr2);
     } else {
-        printf("BINARY\n");
         binary_insertion_sort(base, nitems, size, compar);
     }
 }
@@ -293,46 +292,66 @@ void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nit
 
 void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
     int i = 1;
+    void *currentValue = (void *)malloc(size);
+    void *currentPointer = base;
+    move_pointer(&currentPointer, size); // Skip the first
+
+
     while (i < nitems) {
-        void *arrVal = (void *)malloc(size);
-        unsigned char *basePointer = base;
-        memcpy(arrVal, basePointer + (i * size), size);
-        int indexNewValue = binary_search(base, arrVal, i + 1, size, 0, i, compar);
+        memcpy(currentValue, currentPointer, size);
+        printf("(1) base[0] = %i\n", ((int *)base)[0]);
+        int indexNewValue = binary_search(base, currentValue, size, 0, i, compar);
+        
         int j = i;
         while (j != indexNewValue) {
-            void *arrCompVal = (void *)malloc(size);
-            unsigned char *basePointer = base;
-            memcpy(arrCompVal, basePointer + (i - 1 * size), size);
-            swap(arrVal, arrCompVal, size);
+            void *compareValue = (void *)malloc(size);
+            void *comparePointer = base;
+            printf("*currv = %u, *compv = %u, *base = %u\n", currentPointer, comparePointer, base);
+            move_pointer(&comparePointer, (j - 1) * size);
+            memcpy(compareValue, comparePointer, size);
+            swap(currentValue, compareValue, size);
+            printf("(2-%i) base[0] = %i\n", j, ((int *)base)[15]);
             j--;
         }
+
+        move_pointer(&currentPointer, size);
         i++;
     }
 }
 
 // Return the position where have to put the value
-int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int low, int high, int (*compar)(const void*, const void*)) {
-
-    if (low == high) {
-        void *arrVal = (void *)malloc(size);
-        unsigned char *basePointer = searchArray;
-        memcpy(basePointer + (low * size), arrVal, size);
-        int compareResult = compar(arrVal, item);
-        free(arrVal);
+int binary_search(void *searchArray, void *item, size_t size, int low, int high, int (*compar)(const void*, const void*)) {
+    
+    if (low >= high) {
+        void *currentValue = (void *)malloc(size);
+        void *currentPointer = searchArray;
+        move_pointer(&currentPointer, low * size);
+        memcpy(currentValue, currentPointer, size);
+        int compareResult = compar(currentValue, item);
+        free(currentValue);
+        if (low + compareResult < 0)
+            return 0;
         return low + compareResult;
     }
 
-    int mid = nitems / 2;
-    void *midArrVal = (void *)malloc(size);
-    unsigned char *basePointer = searchArray;
-    memcpy(basePointer + (mid * size), midArrVal, size);
-    
-    int compareResult = compar(midArrVal, item);
+    int mid = (low + high) / 2;
+    void *midcurrentValue = (void *)malloc(size);
+    void *currentPointer = searchArray;
+    move_pointer(&currentPointer, (mid * size));
+    memcpy(midcurrentValue, currentPointer, size);
+
+    int compareResult = compar(midcurrentValue, item);
+    free(midcurrentValue);
 
     if (compareResult >= 0) {
-        return binary_search(searchArray, item, high - mid, size, mid + 1, high, compar);
+        int l = mid + 1;
+        int h = high;
+        return binary_search(searchArray, item, size, l, h, compar);
     } else {
-        return binary_search(searchArray, item, mid - low, size, low, mid - 1, compar);
+        int l = low;
+        int h = mid - 1;
+        if (h < 0) h = 0;
+        return binary_search(searchArray, item, size, l, h, compar);
     }
 }
 
