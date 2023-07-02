@@ -17,7 +17,7 @@ typedef enum {
 typedef struct {
     void *head;
     size_t nitems;
-    int size;
+    size_t size;
     Type type;
 } ArrayInfos;
 
@@ -25,7 +25,7 @@ int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
 ArrayInfos extract_data(char csvPath[], int columnNumber);
 Type get_value_type(char value[]);
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
-void merge(void **base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
+void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
 void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
 int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int low, int high, int (*compar)(const void*, const void*));
 void copy_array(const void *base, void *newArray, size_t nitems, size_t size);
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
         printf("Error while extracting data\n");
         return -1;
     }
-    printf("Extracted %i items, the size of each item is %i byts\n", arrayInfos.nitems, arrayInfos.size);
+    printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfos.nitems, arrayInfos.size);
 
     merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, atoi(argv[3]), compar);
     
@@ -70,11 +70,14 @@ int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
     for (int i = 0; i < arrayInfos.nitems; i++) {
         switch (arrayInfos.type)
         {
+            case NONE:
+                printf("Error, valueType = NONE\n");
+                return -1;
             case INT:
                 fprintf(file, "%i\n", ((int *)base)[i]);
                 break;
             case DOUBLE:
-                fprintf(file, "%d\n", ((double *)base)[i]);
+                fprintf(file, "%f\n", ((double *)base)[i]);
                 break;
             case STRING:
                 fprintf(file, "%s\n", ((char **)base)[i]);
@@ -97,7 +100,7 @@ ArrayInfos extract_data(char csvPath[], int columnNumber) {
     }
 
     size_t nitems = 0;
-    int size = 0;
+    size_t size = 0;
     
     char line[MAX_LINE_LENGTH];
     char column[MAX_COLUMN_LENGTH];
@@ -123,6 +126,10 @@ ArrayInfos extract_data(char csvPath[], int columnNumber) {
 
     switch (valueType)
     {
+        case NONE:
+            printf("Error, the input value has not been recognize\n");
+            arrayInfos.nitems = -1;
+            return arrayInfos;
         case INT:
             arrayInfos.head = malloc(sizeof(int) * nitems);
             size = sizeof(int);
@@ -145,6 +152,10 @@ ArrayInfos extract_data(char csvPath[], int columnNumber) {
             if (columnCount == columnNumber) {
                 switch (valueType)
                 {
+                    case NONE:
+                        printf("Error, valueType = NONE\n");
+                        arrayInfos.nitems = -1;
+                        return arrayInfos;
                     case INT:
                         ((int *)arrayInfos.head)[i] = atoi(token);
                         break;
@@ -178,7 +189,6 @@ Type get_value_type(char value[]) {
 
     int intValue;
     double doubleValue;
-    char stringValue[100];
 
     if (sscanf(value, "%d", &intValue) == 1) { // check int
         return INT;
@@ -207,19 +217,17 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
         merge_binary_insertion_sort(arr1, firstHalfNitems, size, k, compar);
         merge_binary_insertion_sort(arr2, secondHalfNitems, size, k, compar);
 
-        printf("BASE = %i\n", base);
-        return;
-        merge(&base, arr1, firstHalfNitems, arr2, secondHalfNitems, size, compar); 
+        merge(base, arr1, firstHalfNitems, arr2, secondHalfNitems, size, compar); 
         
         free(arr1);
         free(arr2);
     } else {
+        printf("BINARY\n");
         binary_insertion_sort(base, nitems, size, compar);
     }
-
 }
 
-void merge(void **base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*)) {
+void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*)) {
     
     int i = 0, j = 0;
     void *arr1val = (void *)malloc(size);
@@ -230,52 +238,60 @@ void merge(void **base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Ni
     while (i < arr1Nitems && j < arr2Nitems) {
         int compareResult = compar(arr1val, arr2val);
         if (compareResult >= 0) {
-
-            printf("%i\n", base);
-            move_pointer((void *)&base, (i + j) * size);
-            printf("%i\n", base); 
-            return;
-
+            move_pointer(&base, size);
             memcpy(base, arr1val, size);
             
-            move_pointer(&arr1, size);
-            memcpy(arr1val, arr1, size);
+            if (i < arr1Nitems - 1) {
+                move_pointer(&arr1, size);
+                memcpy(arr1val, arr1, size);
+            }
+            
             i++;
         } else {
-            // move pointer
-            move_pointer((void *)&base, (i + j) * size);
-            memcpy(*base, arr2val, size);
-    
-            move_pointer(&arr2, size);
-            memcpy(arr2val, arr2, size);
+            move_pointer(&base, size);
+            memcpy(base, arr2val, size);
+
+            if (j < arr2Nitems - 1) {
+                move_pointer(&arr2, size);
+                memcpy(arr2val, arr2, size);
+            }
+
             j++;
         }
     }
-    return;
+
     if (i < arr1Nitems) {
-        while (i < arr1Nitems || j < arr2Nitems) {
-            move_pointer(&base, (i + j) * size);
-            memcpy(*base, arr1val, size);
+        while (i < arr1Nitems) {
+            move_pointer(&base, size);
+            memcpy(base, arr1val, size);
             
-            move_pointer(&arr1, size);
-            memcpy(arr1val, arr1, size);
+            if (i < arr1Nitems - 1) {
+                move_pointer(&arr1, size);
+                memcpy(arr1val, arr1, size);
+            }
+
             i++;
         }
     } else {
-        while (i < arr1Nitems || j < arr2Nitems) {
-            move_pointer(&base, (i + j) * size);
-            memcpy(*base, arr2val, size);
+        while (j < arr2Nitems) {
+            move_pointer(&base, size);
+            memcpy(base, arr2val, size);
             
-            move_pointer(&arr2, size);
-            memcpy(arr2val, arr2, size);
+            if (j < arr2Nitems - 1) {
+                move_pointer(&arr2, size);
+                memcpy(arr2val, arr2, size);
+            }
+
             j++;
         }
     }
-    
+
     free(arr1val);
     free(arr2val);
 
     // reset base pointer
+    move_pointer(&arr1, -(i * size));
+    move_pointer(&arr2, -(j * size));
     move_pointer(&base, -(i + j) * size);
     printf("base[0] = %i\n", ((int *)base)[0]);
 }
@@ -319,9 +335,9 @@ int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int
     int compareResult = compar(midArrVal, item);
 
     if (compareResult >= 0) {
-        binary_search(searchArray, item, high - mid, size, mid + 1, high, compar);
+        return binary_search(searchArray, item, high - mid, size, mid + 1, high, compar);
     } else {
-        binary_search(searchArray, item, mid - low, size, low, mid - 1, compar);
+        return binary_search(searchArray, item, mid - low, size, low, mid - 1, compar);
     }
 }
 
