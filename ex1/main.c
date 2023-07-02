@@ -31,6 +31,7 @@ int binary_search(void *searchArray, void *item, size_t nitems, size_t size, int
 void copy_array(const void *base, void *newArray, size_t nitems, size_t size);
 void swap(void *val1, void *val2, size_t size);
 int compar(const void *val1, const void *val2);
+void move_pointer(void **base, int ammount);
 
 int main(int argc, char *argv[]) {
     if (argc != ARGUMENT_NUMBER) {
@@ -206,8 +207,10 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
         merge_binary_insertion_sort(arr1, firstHalfNitems, size, k, compar);
         merge_binary_insertion_sort(arr2, secondHalfNitems, size, k, compar);
 
+        printf("BASE = %i\n", base);
+        return;
         merge(&base, arr1, firstHalfNitems, arr2, secondHalfNitems, size, compar); 
-
+        
         free(arr1);
         free(arr2);
     } else {
@@ -217,49 +220,64 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
 }
 
 void merge(void **base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*)) {
+    
     int i = 0, j = 0;
     void *arr1val = (void *)malloc(size);
     void *arr2val = (void *)malloc(size);
     memcpy(arr1val, arr1, size);
     memcpy(arr2val, arr2, size);
 
-    while (i < arr1Nitems || j < arr2Nitems) {
+    while (i < arr1Nitems && j < arr2Nitems) {
         int compareResult = compar(arr1val, arr2val);
         if (compareResult >= 0) {
+
+            printf("%i\n", base);
+            move_pointer((void *)&base, (i + j) * size);
+            printf("%i\n", base); 
+            return;
+
+            memcpy(base, arr1val, size);
+            
+            move_pointer(&arr1, size);
+            memcpy(arr1val, arr1, size);
             i++;
-            unsigned char *basePointer = base;
-            //memcpy(basePointer + ((i + j) * size), arr1val, size);
-            unsigned char *arrPointer = arr1;
-            memcpy(arr1val, arrPointer + (i * size), size);
         } else {
+            // move pointer
+            move_pointer((void *)&base, (i + j) * size);
+            memcpy(*base, arr2val, size);
+    
+            move_pointer(&arr2, size);
+            memcpy(arr2val, arr2, size);
             j++;
-            unsigned char *basePointer = base;
-            //memcpy(basePointer + ((i + j) * size), arr2val, size);
-            unsigned char *arrPointer = arr2;
-            memcpy(arr2val, arrPointer + (j * size), size);
         }
     }
     return;
     if (i < arr1Nitems) {
         while (i < arr1Nitems || j < arr2Nitems) {
+            move_pointer(&base, (i + j) * size);
+            memcpy(*base, arr1val, size);
+            
+            move_pointer(&arr1, size);
+            memcpy(arr1val, arr1, size);
             i++;
-            unsigned char *basePointer = base;
-            memcpy(basePointer + ((i + j) * size), arr1val, size);
-            unsigned char *arrPointer = arr1;
-            memcpy(arr1val, arrPointer + (i * size), size);
         }
     } else {
         while (i < arr1Nitems || j < arr2Nitems) {
+            move_pointer(&base, (i + j) * size);
+            memcpy(*base, arr2val, size);
+            
+            move_pointer(&arr2, size);
+            memcpy(arr2val, arr2, size);
             j++;
-            unsigned char *basePointer = base;
-            memcpy(basePointer + ((i + j) * size), arr2val, size);
-            unsigned char *arrPointer = arr2;
-            memcpy(arr2val, arrPointer + (j * size), size);
         }
     }
     
     free(arr1val);
     free(arr2val);
+
+    // reset base pointer
+    move_pointer(&base, -(i + j) * size);
+    printf("base[0] = %i\n", ((int *)base)[0]);
 }
 
 void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
@@ -328,4 +346,11 @@ int compar(const void *val1, const void *val2) {
         return -1;
     else
         return 0;
+}
+
+// move a pointer of ammount
+void move_pointer(void **base, int ammount) {
+    unsigned char *basePointer = *base;
+    basePointer += ammount;
+    *base = (void *)basePointer;
 }
