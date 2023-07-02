@@ -232,58 +232,54 @@ void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nit
     int i = 0, j = 0;
     void *arr1val = (void *)malloc(size);
     void *arr2val = (void *)malloc(size);
-    memcpy(arr1val, arr1, size);
-    memcpy(arr2val, arr2, size);
 
     while (i < arr1Nitems && j < arr2Nitems) {
+        if (i == 0 && j == 0) {
+            memcpy(arr1val, arr1, size);
+            memcpy(arr2val, arr2, size);
+        }
+
         int compareResult = compar(arr1val, arr2val);
-        if (compareResult >= 0) {
-            move_pointer(&base, size);
+
+        if (compareResult < 0) {
             memcpy(base, arr1val, size);
-            
-            if (i < arr1Nitems - 1) {
+            i++;
+            if (i < arr1Nitems) {
                 move_pointer(&arr1, size);
                 memcpy(arr1val, arr1, size);
             }
-            
-            i++;
         } else {
-            move_pointer(&base, size);
             memcpy(base, arr2val, size);
-
-            if (j < arr2Nitems - 1) {
+            j++;
+            if (j < arr2Nitems) {
                 move_pointer(&arr2, size);
                 memcpy(arr2val, arr2, size);
             }
-
-            j++;
         }
+
+        move_pointer(&base, size);
     }
 
-    if (i < arr1Nitems) {
-        while (i < arr1Nitems) {
-            move_pointer(&base, size);
-            memcpy(base, arr1val, size);
-            
-            if (i < arr1Nitems - 1) {
-                move_pointer(&arr1, size);
-                memcpy(arr1val, arr1, size);
-            }
-
-            i++;
+    while (i < arr1Nitems) {
+        memcpy(base, arr1val, size);
+        i++;
+        if (i < arr1Nitems) {
+            move_pointer(&arr1, size);
+            memcpy(arr1val, arr1, size);
         }
-    } else {
-        while (j < arr2Nitems) {
-            move_pointer(&base, size);
-            memcpy(base, arr2val, size);
-            
-            if (j < arr2Nitems - 1) {
-                move_pointer(&arr2, size);
-                memcpy(arr2val, arr2, size);
-            }
 
-            j++;
+        move_pointer(&base, size);
+    }
+
+    while (j < arr2Nitems) {
+        memcpy(base, arr2val, size);
+        j++;
+        if (j < arr2Nitems) {
+            move_pointer(&arr2, size);
+            memcpy(arr2val, arr2, size);
         }
+
+        move_pointer(&base, size);
     }
 
     free(arr1val);
@@ -293,7 +289,6 @@ void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nit
     move_pointer(&arr1, -(i * size));
     move_pointer(&arr2, -(j * size));
     move_pointer(&base, -(i + j) * size);
-    printf("base[0] = %i\n", ((int *)base)[0]);
 }
 
 void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
