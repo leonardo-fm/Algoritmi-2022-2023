@@ -42,7 +42,16 @@ int main(int argc, char *argv[]) {
 
     printf("Extracting data from %s...\n", argv[1]);
     fflush(stdout);
+
+    clock_t start, end;
+    double cpu_time_used;
+
+    start = clock();
     ArrayInfos arrayInfos = extract_data(argv[1], atoi(argv[3]));
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time of extraction: %.2f seconds\n", cpu_time_used);
+
     if (arrayInfos.nitems == -1) {
         printf("Error while extracting data\n");
         return -1;
@@ -50,19 +59,22 @@ int main(int argc, char *argv[]) {
     printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfos.nitems, arrayInfos.size);
     fflush(stdout);
     
-    clock_t start, end;
-    double cpu_time_used;
-    start = clock();
 
+    start = clock();
     merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, atoi(argv[4]), compar);
-    
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of execution for only the sorting: %.2f seconds\n", cpu_time_used);
+    printf("Time of sorting: %.2f seconds\n", cpu_time_used);
 
     printf("Start saving data...\n");
     fflush(stdout);
+
+    start = clock();
     int response = save_data(arrayInfos.head, arrayInfos, argv[2]);
+    end = clock();
+    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Time of saiving: %.2f seconds\n", cpu_time_used);
+
     if (response == -1) {
         printf("Error while saving data\n");
         return -1;
@@ -114,10 +126,10 @@ ArrayInfos extract_data(char csvPath[], int columnNumber) {
 
     size_t nitems = 0;
     size_t size = 0;
-    
+    Type valueType = NONE;
+
     char line[MAX_LINE_LENGTH];
     char column[MAX_COLUMN_LENGTH];
-    Type valueType = NONE;
     while (fgets(line, sizeof(line), file) != NULL) {
         if (valueType == NONE) {
             char* token = strtok(line, ",");
