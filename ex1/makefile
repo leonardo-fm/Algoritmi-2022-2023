@@ -1,10 +1,20 @@
-build: main
+CC = gcc
+all: bin/merge_binary_insertion_sort #bin/sorted_array_tests
 
-test: main tests
-	bin/unitTests_ex1.exe
+CFLAGS = -g -Wall -Wextra -Wpedantic -Wconversion
 
-main:
-	gcc -Wall -o bin/main_ex1.exe main.c
+INCLUDES = src/*.h
 
-tests:
-	gcc -Wall -o bin/unitTests_ex1.exe unitTest.c
+COMMON_DEPS = $(INCLUDES) Makefile
+
+build/%.o: src/%.c $(COMMON_DEPS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+bin/merge_binary_insertion_sort: build/merge_binary_insertion_sort.o build/sorted_array_main.o $(COMMON_DEPS)
+	$(CC) -o bin/merge_binary_insertion_sort build/merge_binary_insertion_sort.o build/sorted_array_main.o
+
+bin/sorted_array_tests: build/sorted_array_tests.o build/merge_binary_insertion_sort.o build/unity.o $(COMMON_DEPS)
+	$(CC) -o bin/sorted_array_tests build/sorted_array_tests.o build/merge_binary_insertion_sort.o build/unity.o
+
+clean:
+	rm -f build/* bin/*
