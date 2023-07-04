@@ -32,8 +32,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (atoi(argv[3]) >= RECORD_FIELDS_NUMBER) {
-        fprintf(stderr, "main: recrod column index wrong (0 to 3)");
+    if (atoi(argv[3]) == 0 || atoi(argv[3]) >= RECORD_FIELDS_NUMBER) {
+        fprintf(stderr, "main: recorod column index wrong (1 to 3)");
         exit(EXIT_FAILURE);
     }
 
@@ -54,7 +54,6 @@ int main(int argc, char *argv[]) {
     start = clock();
     switch (atoi(argv[3]))
     {
-        case 0:
         case 2:
             merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_int);
             break;
@@ -158,10 +157,12 @@ static int compar_int(const void *val1, const void *val2) {
         fprintf(stderr,"compar_int: the second parameter is a null pointer");
         exit(EXIT_FAILURE);
     }
-
-    if (*(int *)val1 > *(int *)val2)
+    
+    struct Record *record1 = (struct Record *)val1;
+    struct Record *record2 = (struct Record *)val2;
+    if (record1->integer_field > record2->integer_field)
         return 1;
-    else if (*(int *)val1 < *(int *)val2)
+    else if (record1->integer_field < record2->integer_field)
         return -1;
     else
         return 0;
@@ -178,9 +179,11 @@ static int compar_float(const void *val1, const void *val2) {
         exit(EXIT_FAILURE);
     }
 
-    if (*(float *)val1 > *(float *)val2)
+    struct Record *record1 = (struct Record *)val1;
+    struct Record *record2 = (struct Record *)val2;
+    if (record1->float_field > record2->float_field)
         return 1;
-    else if (*(float *)val1 < *(float *)val2)
+    else if (record1->float_field < record2->float_field)
         return -1;
     else
         return 0;
@@ -197,5 +200,7 @@ static int compar_string(const void *val1, const void *val2) {
         exit(EXIT_FAILURE);
     }
 
-    return strcmp((char *)val1, (char *)val2);
+    struct Record *record1 = (struct Record *)val1;
+    struct Record *record2 = (struct Record *)val2;
+    return strcmp(record1->string_field, record2->string_field);
 }

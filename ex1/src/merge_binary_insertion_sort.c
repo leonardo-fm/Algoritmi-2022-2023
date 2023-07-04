@@ -14,10 +14,14 @@ static void move_pointer(void **base, int ammount);
 static int argsChecked = 0;
 
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*)){
-    if (argsChecked == 0)
+    if (argsChecked == 0) {
         args_check(base, nitems, size, compar);
+    }
 
-    return;
+    if (nitems == 1) {
+        return;
+    }
+
     if (nitems >= k) {
         merge_sort(base, nitems, size, k, compar);
     } else {
@@ -67,11 +71,11 @@ static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*c
     }
     void *arr2Pointer = base;
     move_pointer(&arr2Pointer, (int)(firstHalfNitems * size));
-    memcpy(arr1, arr2Pointer, secondHalfNitems * size);
+    memcpy(arr2, arr2Pointer, secondHalfNitems * size);
     
     merge_binary_insertion_sort(arr1, firstHalfNitems, size, k, compar);
     merge_binary_insertion_sort(arr2, secondHalfNitems, size, k, compar);
-
+        
     merge(base, arr1, firstHalfNitems, arr2, secondHalfNitems, size, compar); 
     
     free(arr1);
@@ -136,7 +140,7 @@ static void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*
             
             compareItem2 = base;
             move_pointer(&compareItem2, (int)((j - 1) * size));
-
+            
             swap(compareItem1, compareItem2, size);
             j--;
         }
@@ -144,6 +148,7 @@ static void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*
         move_pointer(&currentPointer, (int)size);
         i++;
     }
+
 }
 
 // Return the position where have to put the value
@@ -165,7 +170,7 @@ static size_t binary_search(void *searchArray, void *item, size_t size, size_t l
     if (compar(currentItem, item) < 0) { // If item is greater of current item
         return binary_search(searchArray, item, size, mid + 1, high, compar);
     } else {
-        return binary_search(searchArray, item, size, low, mid - 1, compar);
+        return binary_search(searchArray, item, size, low, (mid > 0) ? (mid - 1) : 0, compar);
     }
 }
 
