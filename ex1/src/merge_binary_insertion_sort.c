@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "merge_binary_insertion_sort.h"
 
+static void args_check(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
 static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*));
 static void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*));
 static void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*));
@@ -10,7 +11,21 @@ static size_t binary_search(void *searchArray, void *item, size_t size, size_t l
 static void swap(void *val1, void *val2, size_t size);
 static void move_pointer(void **base, int ammount);
 
+static int argsChecked = 0;
+
 void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*)){
+    if (argsChecked == 0)
+        args_check(base, nitems, size, compar);
+
+    return;
+    if (nitems >= k) {
+        merge_sort(base, nitems, size, k, compar);
+    } else {
+        binary_insertion_sort(base, nitems, size, compar);
+    }
+}
+
+static void args_check(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
     if (base == NULL) {
       fprintf(stderr, "merge_binary_insertion_sort: the pointer of the array can't be NULL");
       exit(EXIT_FAILURE);
@@ -31,11 +46,7 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
       exit(EXIT_FAILURE);
     }
 
-    if (nitems >= k) {
-        merge_sort(base, nitems, size, k, compar);
-    } else {
-        binary_insertion_sort(base, nitems, size, compar);
-    }
+    argsChecked = 1;
 }
 
 static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*)) {

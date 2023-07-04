@@ -109,7 +109,8 @@ static struct ArrayInfo extract_data(char *csvPath) {
         array[i].id = atoi(token);
         token = strtok(NULL, ",");
 
-        array[i].string_field = malloc((strlen(token) + 1) * sizeof(char));
+        array[i].string_field = (char *)malloc((strlen(token) + 1) * sizeof(char));
+        strcpy(array[i].string_field, token);
         token = strtok(NULL, ",");
         
         array[i].integer_field = atoi(token);
