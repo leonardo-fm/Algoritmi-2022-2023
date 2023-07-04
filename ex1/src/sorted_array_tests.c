@@ -15,7 +15,6 @@ static int compar_int(const void *val1, const void *val2) {
 
 //Data elements that are initialized before each test
 static int *array;
-static int *singleArray;
 static size_t nitems;
 static size_t size;
 

@@ -1,5 +1,5 @@
 CC = gcc
-all: bin/merge_binary_insertion_sort bin/sorted_array_tests
+all: bin/merge_binary_insertion_sort bin/sorted_array_tests bin/sorted_array_collect_data_report
 
 CFLAGS = -g -Wall -Wextra -Wpedantic -Wconversion
 
@@ -9,6 +9,9 @@ COMMON_DEPS = $(INCLUDES) Makefile
 
 build/%.o: src/%.c $(COMMON_DEPS)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+bin/sorted_array_collect_data_report: build/merge_binary_insertion_sort.o build/sorted_array_collect_data_report.o $(COMMON_DEPS)
+	$(CC) -o bin/generate_report build/merge_binary_insertion_sort.o build/sorted_array_collect_data_report.o
 
 bin/merge_binary_insertion_sort: build/merge_binary_insertion_sort.o build/sorted_array_main.o $(COMMON_DEPS)
 	$(CC) -o bin/main_ex1 build/merge_binary_insertion_sort.o build/sorted_array_main.o

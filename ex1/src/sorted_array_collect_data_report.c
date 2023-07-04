@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+//#include <windows.h>
 #include "merge_binary_insertion_sort.h"
 
 struct Record {
@@ -17,76 +18,80 @@ struct ArrayInfo {
     size_t nitems;
 };
 
+struct ReportData {
+    size_t nitems;
+    int col_index_sort;
+    double time;
+    size_t k;
+};
+
 static struct ArrayInfo extract_data(char *csvPath);
-static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath);
+static void write_header(char *fileOutputPath);
+static void save_data(struct ReportData reportData, char *fileOutputPath);
 static int compar_int(const void *val1, const void *val2);
 static int compar_float(const void *val1, const void *val2);
 static int compar_string(const void *val1, const void *val2);
 
-#define ARGUMENT_NUMBER 5
-#define RECORD_FIELDS_NUMBER 4
+int main() {
+    //char path[MAX_PATH];
+    //GetCurrentDirectory(MAX_PATH, path);
+    //printf("Current directory: %s\n", path);
 
-int main(int argc, char *argv[]) {
-    if (argc != ARGUMENT_NUMBER) {
-        fprintf(stderr, "main: wrong ammount of arguments");
-        exit(EXIT_FAILURE);
-    }
+    char *dataSource = ".\\data\\records_light.csv";
+    char *dataFinish = ".\\report\\report_tests.csv";
 
-    if (atoi(argv[3]) == 0 || atoi(argv[3]) >= RECORD_FIELDS_NUMBER) {
-        fprintf(stderr, "main: recorod column index wrong (1 to 3)");
-        exit(EXIT_FAILURE);
-    }
+    size_t case1 = 15; 
 
+    // Arrange
     clock_t start, end;
-    double cpu_time_used;
+    double cpuTimeUsed;
+    struct ArrayInfo arrayInfo = extract_data(dataSource);
+    write_header(dataFinish);
+    int col = 2;
+    size_t k = 0;
+    
+    for (k = 0; k < case1; k++) {
+        printf("Sorting case 1 - %lli/%lli\n", k + 1, case1);
+        fflush(stdout);
 
-    printf("Extracting data from %s...\n", argv[1]);
-    fflush(stdout);
-    start = clock();
-    struct ArrayInfo arrayInfo = extract_data(argv[1]);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of extraction: %.2f seconds\n", cpu_time_used);
-    printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfo.nitems, arrayInfo.size);
-    fflush(stdout);
+        // Copy the array
+        struct Record *copyArray = (struct Record *)malloc(sizeof(struct Record) * arrayInfo.nitems);
+        memcpy(copyArray, arrayInfo.base, sizeof(struct Record) * arrayInfo.nitems);
 
-    printf("Starting to sort the array...\n");
-    fflush(stdout);
-    start = clock();
-    switch (atoi(argv[3]))
-    {
-        case 1:
-            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_string);
-            break;
-        case 2:
-            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_int);
-            break;
-        case 3:
-            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_float);
-            break;
+        start = clock();
+        switch (col)
+        {
+            case 1:
+                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_string);
+                break;
+            case 2:
+                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_int);
+                break;
+            case 3:
+                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_float);
+                break;
+        }
+        end = clock();
+        cpuTimeUsed = ((double) (end - start)) / CLOCKS_PER_SEC; //%.2f
+        
+        struct ReportData reportData;
+        reportData.nitems = arrayInfo.nitems;
+        reportData.col_index_sort = col;
+        reportData.time = cpuTimeUsed;
+        reportData.k = k;
+
+        save_data(reportData, dataFinish);
+        free(copyArray);
     }
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of sorting: %.2f seconds\n", cpu_time_used);
 
-
-    printf("Start saving data...\n");
-    fflush(stdout);
-    start = clock();
-    save_data(arrayInfo, argv[2]);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of saiving: %.2f seconds\n", cpu_time_used);
-    printf("Succesfully saived the data int the file: %s\n", argv[2]);
-    fflush(stdout);
-
+    printf("Finish collecting data!\n");
     return 0;
 }
 
 static struct ArrayInfo extract_data(char *csvPath) {
     FILE* file = fopen(csvPath, "r");
     if (file == NULL) {
-        fprintf(stderr, "main: unable to open the file");
+        fprintf(stderr, "extract_data: unable to open the file");
         exit(EXIT_FAILURE);
     }
 
@@ -131,21 +136,27 @@ static struct ArrayInfo extract_data(char *csvPath) {
     return arrayInfo;
 }
 
-static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath) {
+static void write_header(char *fileOutputPath) {
     FILE* file = fopen(fileOutputPath, "w");
     if (file == NULL) {
         fprintf(stderr, "main: unable to open the file");
         exit(EXIT_FAILURE);
     }
 
-    unsigned long i;
-    const size_t nitems = arrayInfo.nitems;
+    fprintf(file, "%s,%s,%s,%s\n", "nline", "col_index", "time", "k");
 
-    for (i = 0; i < nitems; i++) {
-        fprintf(file, "%i,%s,%i,%f\n", 
-            arrayInfo.base[i].id, arrayInfo.base[i].string_field, 
-            arrayInfo.base[i].integer_field, arrayInfo.base[i].float_field);
+    fclose(file);
+}
+
+static void save_data(struct ReportData reportdata, char *fileOutputPath) {
+    FILE* file = fopen(fileOutputPath, "a");
+    if (file == NULL) {
+        fprintf(stderr, "main: unable to open the file");
+        exit(EXIT_FAILURE);
     }
+
+    fprintf(file, "%lli,%i,%f,%lli\n", 
+        reportdata.nitems, reportdata.col_index_sort, reportdata.time, reportdata.k);
 
     fclose(file);
 }
