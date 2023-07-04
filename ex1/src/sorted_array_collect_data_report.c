@@ -25,6 +25,7 @@ struct ReportData {
     size_t k;
 };
 
+static void general_case(struct Record *base, size_t iterations, size_t nitems, int col, char *dataFinish);
 static struct ArrayInfo extract_data(char *csvPath);
 static void write_header(char *fileOutputPath);
 static void save_data(struct ReportData reportData, char *fileOutputPath);
@@ -37,45 +38,59 @@ int main() {
     //GetCurrentDirectory(MAX_PATH, path);
     //printf("Current directory: %s\n", path);
 
-    char *dataSource = ".\\data\\records_light.csv";
+    char *dataSource = ".\\data\\records_light_plus.csv";
     char *dataFinish = ".\\report\\report_tests.csv";
 
-    size_t case1 = 15; 
-
     // Arrange
-    clock_t start, end;
-    double cpuTimeUsed;
     struct ArrayInfo arrayInfo = extract_data(dataSource);
     write_header(dataFinish);
-    int col = 2;
+
+    // Act
+    general_case(arrayInfo.base, 15, arrayInfo.nitems, 1, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems, 3, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
+
+    printf("Finish collecting data!\n");
+    return 0;
+}
+
+static void general_case(struct Record *base, size_t iterations, size_t nitems, int col, char *dataFinish) {
+    clock_t start, end;
+    double cpuTimeUsed;
     size_t k = 0;
-    
-    for (k = 0; k < case1; k++) {
-        printf("Sorting case 1 - %lli/%lli\n", k + 1, case1);
+
+    for (k = 0; k < iterations; k++) {
+        printf("Sorting case %i-%lli => %lli/%lli\n", col, nitems, k + 1, iterations);
         fflush(stdout);
 
         // Copy the array
-        struct Record *copyArray = (struct Record *)malloc(sizeof(struct Record) * arrayInfo.nitems);
-        memcpy(copyArray, arrayInfo.base, sizeof(struct Record) * arrayInfo.nitems);
+        struct Record *copyArray = (struct Record *)malloc(sizeof(struct Record) * nitems);
+        memcpy(copyArray, base, sizeof(struct Record) * nitems);
 
         start = clock();
         switch (col)
         {
             case 1:
-                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_string);
+                merge_binary_insertion_sort(copyArray, nitems, sizeof(struct Record), k, compar_string);
                 break;
             case 2:
-                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_int);
+                merge_binary_insertion_sort(copyArray, nitems, sizeof(struct Record), k, compar_int);
                 break;
             case 3:
-                merge_binary_insertion_sort(copyArray, arrayInfo.nitems, arrayInfo.size, k, compar_float);
+                merge_binary_insertion_sort(copyArray, nitems, sizeof(struct Record), k, compar_float);
                 break;
         }
         end = clock();
         cpuTimeUsed = ((double) (end - start)) / CLOCKS_PER_SEC; //%.2f
         
         struct ReportData reportData;
-        reportData.nitems = arrayInfo.nitems;
+        reportData.nitems = nitems;
         reportData.col_index_sort = col;
         reportData.time = cpuTimeUsed;
         reportData.k = k;
@@ -83,9 +98,6 @@ int main() {
         save_data(reportData, dataFinish);
         free(copyArray);
     }
-
-    printf("Finish collecting data!\n");
-    return 0;
 }
 
 static struct ArrayInfo extract_data(char *csvPath) {
