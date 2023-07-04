@@ -1,5 +1,5 @@
 CC = gcc
-all: bin/merge_binary_insertion_sort #bin/sorted_array_tests
+all: bin/merge_binary_insertion_sort bin/sorted_array_tests
 
 CFLAGS = -g -Wall -Wextra -Wpedantic -Wconversion
 
