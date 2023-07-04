@@ -33,13 +33,20 @@ static int compar_int(const void *val1, const void *val2);
 static int compar_float(const void *val1, const void *val2);
 static int compar_string(const void *val1, const void *val2);
 
-int main() {
+int main(int argc, char *argv[]) {
     //char path[MAX_PATH];
     //GetCurrentDirectory(MAX_PATH, path);
     //printf("Current directory: %s\n", path);
 
-    char *dataSource = ".\\data\\records_light_plus.csv";
-    char *dataFinish = ".\\report\\report_tests.csv";
+    //char *dataSource = ".\\data\\records.csv";
+    //char *dataFinish = ".\\report\\report_tests.csv";
+    if (argc != 3) {
+        fprintf(stderr, "main: not correct ammount of arguments (2)");
+        exit(EXIT_FAILURE);
+    }
+
+    char *dataSource = argv[1];
+    char *dataFinish = argv[2];
 
     // Arrange
     struct ArrayInfo arrayInfo = extract_data(dataSource);
@@ -49,12 +56,12 @@ int main() {
     general_case(arrayInfo.base, 15, arrayInfo.nitems, 1, dataFinish);
     general_case(arrayInfo.base, 15, arrayInfo.nitems, 2, dataFinish);
     general_case(arrayInfo.base, 15, arrayInfo.nitems, 3, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 1, dataFinish);
     general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 3, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 1, dataFinish);
     general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
+    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 3, dataFinish);
 
     printf("Finish collecting data!\n");
     return 0;

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "merge_binary_insertion_sort.h": "c",
+        "stdio.h": "c"
+    }
+}
