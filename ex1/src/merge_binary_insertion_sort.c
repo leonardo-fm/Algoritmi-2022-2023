@@ -44,14 +44,14 @@ static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*c
 
     void *arr1 = (void *) malloc(firstHalfNitems * size);
     if (arr1 == NULL) {
-      fprintf(stderr, "merge_sort: unable to allocate memory");
+      fprintf(stderr, "merge_binary_insertion_sort: unable to allocate memory for merge sort");
       exit(EXIT_FAILURE);
     }
     memcpy(arr1, base, firstHalfNitems * size);
     
     void *arr2 = (void *) malloc(secondHalfNitems * size);
     if (arr2 == NULL) {
-      fprintf(stderr, "merge_sort: unable to allocate memory");
+      fprintf(stderr, "merge_binary_insertion_sort: unable to allocate memory for merge sort");
       exit(EXIT_FAILURE);
     }
     void *arr2Pointer = base;

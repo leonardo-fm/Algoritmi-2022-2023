@@ -4,226 +4,197 @@
 #include <time.h>
 #include "merge_binary_insertion_sort.h"
 
-#define MAX_LINE_LENGTH 1000
-#define MAX_COLUMN_LENGTH 100
+struct Record {
+    int id;
+    char* string_field;
+    int integer_field;
+    float float_field;
+};
 
-typedef enum {
-    NONE,
-    INT,
-    DOUBLE,
-    STRING
-} Type;
-
-typedef struct {
-    void *head;
-    size_t nitems;
+struct ArrayInfo {
+    struct Record *base;
     size_t size;
-    Type type;
-} ArrayInfos;
+    size_t nitems;
+};
 
-static ArrayInfos extract_data(char csvPath[], int columnNumber);
-static Type get_value_type(char value[]);
-static int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath);
-static int compar(const void *val1, const void *val2);
+static struct ArrayInfo extract_data(char *csvPath);
+static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath);
+static int compar_int(const void *val1, const void *val2);
+static int compar_float(const void *val1, const void *val2);
+static int compar_string(const void *val1, const void *val2);
 
 #define ARGUMENT_NUMBER 5
+#define RECORD_FIELDS_NUMBER 4
 
 int main(int argc, char *argv[]) {
     if (argc != ARGUMENT_NUMBER) {
-        printf("Not enough arguments %i\n", argc);
-        return -1;
+        fprintf(stderr, "main: wrong ammount of arguments");
+        exit(EXIT_FAILURE);
     }
 
-    printf("Extracting data from %s...\n", argv[1]);
-    fflush(stdout);
+    if (atoi(argv[3]) >= RECORD_FIELDS_NUMBER) {
+        fprintf(stderr, "main: recrod column index wrong (0 to 3)");
+        exit(EXIT_FAILURE);
+    }
 
     clock_t start, end;
     double cpu_time_used;
 
+    printf("Extracting data from %s...\n", argv[1]);
+    fflush(stdout);
     start = clock();
-    ArrayInfos arrayInfos = extract_data(argv[1], atoi(argv[3]));
+    struct ArrayInfo arrayInfo = extract_data(argv[1]);
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Time of extraction: %.2f seconds\n", cpu_time_used);
-
-    if (arrayInfos.type == NONE) {
-        printf("Error while extracting data\n");
-        return -1;
-    }
-    printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfos.nitems, arrayInfos.size);
+    printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfo.nitems, arrayInfo.size);
     fflush(stdout);
-    
 
+    printf("Starting to sort the array...\n");
     start = clock();
-    merge_binary_insertion_sort(arrayInfos.head, arrayInfos.nitems, arrayInfos.size, (size_t)atoi(argv[4]), compar);
+    switch (atoi(argv[3]))
+    {
+        case 0:
+        case 2:
+            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_int);
+            break;
+        case 1:
+            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_string);
+            break;
+        case 3:
+            merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_float);
+            break;
+    }
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Time of sorting: %.2f seconds\n", cpu_time_used);
 
+
     printf("Start saving data...\n");
     fflush(stdout);
-
     start = clock();
-    int response = save_data(arrayInfos.head, arrayInfos, argv[2]);
+    save_data(arrayInfo, argv[2]);
     end = clock();
     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("Time of saiving: %.2f seconds\n", cpu_time_used);
-
-    if (response == -1) {
-        printf("Error while saving data\n");
-        return -1;
-    }
     printf("Succesfully saived the data int the file: %s\n", argv[2]);
     fflush(stdout);
 
     return 0;
 }
 
-// return the number of items in the array
-static ArrayInfos extract_data(char csvPath[], int columnNumber) {
-    ArrayInfos arrayInfos;
+static struct ArrayInfo extract_data(char *csvPath) {
     FILE* file = fopen(csvPath, "r");
     if (file == NULL) {
-        printf("Failed to open the file.\n");
-        arrayInfos.type = NONE;
-        return arrayInfos;
+        fprintf(stderr, "main: unable to open the file");
+        exit(EXIT_FAILURE);
     }
+
+    char buffer[1024];
+    int bufSize = 1024;
 
     size_t nitems = 0;
-    size_t size = 0;
-    Type valueType = NONE;
-
-    char line[MAX_LINE_LENGTH];
-    char column[MAX_COLUMN_LENGTH];
-    while (fgets(line, sizeof(line), file) != NULL) {
-        if (valueType == NONE) {
-            char* token = strtok(line, ",");
-            int columnCount = 0;
-            while (token != NULL) {
-                if (columnCount == columnNumber) {
-                    strcpy(column, token);
-                    valueType = get_value_type(column);
-                    break;
-                }
-                token = strtok(NULL, ",");
-                columnCount++;
-            }
-        }
-
+    while (fgets(buffer, bufSize, file) != NULL) {
         nitems++;
     }
+
     fseek(file, 0, SEEK_SET);
+    
+    struct Record *array = (struct Record *)malloc(sizeof(struct Record) * nitems);
 
-    switch (valueType)
-    {
-        case NONE:
-            printf("Error, the input value has not been recognize\n");
-            arrayInfos.type = NONE;
-            return arrayInfos;
-        case INT:
-            arrayInfos.head = malloc(sizeof(int) * nitems);
-            size = sizeof(int);
-            break;
-        case DOUBLE:
-            arrayInfos.head = malloc(sizeof(double) * nitems);
-            size = sizeof(double);
-            break;
-        case STRING:
-            arrayInfos.head = malloc(sizeof(char *) * nitems);
-            size = sizeof(char *);
-            break;
-    }
+    unsigned long i = 0;
+    while (fgets(buffer, bufSize, file) != NULL) {
+        char* token = strtok(buffer, ",");
+        
+        array[i].id = atoi(token);
+        token = strtok(NULL, ",");
 
-    int i = 0;
-    while (fgets(line, sizeof(line), file) != NULL) {
-        char* token = strtok(line, ",");
-        int columnCount = 0;
-        while (token != NULL) {
-            if (columnCount == columnNumber) {
-                char *ptr;
-                switch (valueType)
-                {
-                    case NONE:
-                        printf("Error, valueType = NONE\n");
-                        arrayInfos.type = NONE;
-                        return arrayInfos;
-                    case INT:
-                        ((int *)arrayInfos.head)[i] = atoi(token);
-                        break;
-                    case DOUBLE:
-                        ((double *)arrayInfos.head)[i] = strtod(token, &ptr);
-                        break;
-                    case STRING:
-                        ((char **)arrayInfos.head)[i] = (char *)malloc((strlen(token) + 1) * sizeof(char));
-                        strcpy(arrayInfos.head, token);
-                        break;
-                }
+        array[i].string_field = malloc((strlen(token) + 1) * sizeof(char));
+        token = strtok(NULL, ",");
+        
+        array[i].integer_field = atoi(token);
+        token = strtok(NULL, ",");
 
-                i++;
-                break;
-            }
-            token = strtok(NULL, ","); // take next token
-            columnCount++;
-        }
+        char *ptr;
+        array[i].float_field = strtof(token, &ptr);
+
+        i++;
     }
 
     fclose(file);
-    arrayInfos.nitems = nitems;
-    arrayInfos.size = size;
-    arrayInfos.type = valueType;
-    return arrayInfos;
+
+    struct ArrayInfo arrayInfo;
+    arrayInfo.base = array;
+    arrayInfo.size = sizeof(struct Record);
+    arrayInfo.nitems = nitems;
+    return arrayInfo;
 }
 
-// Check the type of a string, 0 = int, 1 = double, 2 = string
-static Type get_value_type(char value[]) {
-
-    int intValue;
-    double doubleValue;
-
-    if (sscanf(value, "%d", &intValue) == 1) { // check int
-        return INT;
-    } else if (sscanf(value, "%lf", &doubleValue) == 1) { // check double
-        return DOUBLE;
-    } else { // string
-        return STRING;
-    }
-}
-
-static int save_data(void *base, ArrayInfos arrayInfos, char *fileOutputPath) {
+static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath) {
     FILE* file = fopen(fileOutputPath, "w");
     if (file == NULL) {
-        printf("Failed to open the file.\n");
-        return -1;
+        fprintf(stderr, "main: unable to open the file");
+        exit(EXIT_FAILURE);
     }
-     unsigned long i;
-    for (i = 0; i < arrayInfos.nitems; i++) {
-        switch (arrayInfos.type)
-        {
-            case NONE:
-                printf("Error, valueType = NONE\n");
-                return -1;
-            case INT:
-                fprintf(file, "%i\n", ((int *)base)[i]);
-                break;
-            case DOUBLE:
-                fprintf(file, "%f\n", ((double *)base)[i]);
-                break;
-            case STRING:
-                fprintf(file, "%s\n", ((char **)base)[i]);
-                break;
-        }
+
+    unsigned long i;
+    for (i = 0; i < arrayInfo.nitems; i++) {
+        fprintf(file, "%i,%s,%i,%f\n", 
+            arrayInfo.base[i].id, arrayInfo.base[i].string_field, 
+            arrayInfo.base[i].integer_field, arrayInfo.base[i].float_field);
     }
 
     fclose(file);
-    return 0;
 }
 
-// val1 > val2 = 1, val1 < val2 = -1, val1 == val2 = 0
-static int compar(const void *val1, const void *val2) {
+static int compar_int(const void *val1, const void *val2) {
+    if(val1 == NULL){
+        fprintf(stderr,"compar_int: the first parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if(val2 == NULL){
+        fprintf(stderr,"compar_int: the second parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
     if (*(int *)val1 > *(int *)val2)
         return 1;
     else if (*(int *)val1 < *(int *)val2)
         return -1;
     else
         return 0;
+}
+
+static int compar_float(const void *val1, const void *val2) {
+    if(val1 == NULL){
+        fprintf(stderr,"compar_float: the first parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if(val2 == NULL){
+        fprintf(stderr,"compar_float: the second parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if (*(float *)val1 > *(float *)val2)
+        return 1;
+    else if (*(float *)val1 < *(float *)val2)
+        return -1;
+    else
+        return 0;
+}
+
+static int compar_string(const void *val1, const void *val2) {
+    if(val1 == NULL){
+        fprintf(stderr,"compar_string: the first parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if(val2 == NULL){
+        fprintf(stderr,"compar_string: the second parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    return strcmp((char *)val1, (char *)val2);
 }
