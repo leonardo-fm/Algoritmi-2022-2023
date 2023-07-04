@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
 
     printf("Starting to sort the array...\n");
+    fflush(stdout);
     start = clock();
     switch (atoi(argv[3]))
     {
@@ -138,7 +139,9 @@ static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath) {
     }
 
     unsigned long i;
-    for (i = 0; i < arrayInfo.nitems; i++) {
+    const size_t nitems = arrayInfo.nitems;
+
+    for (i = 0; i < nitems; i++) {
         fprintf(file, "%i,%s,%i,%f\n", 
             arrayInfo.base[i].id, arrayInfo.base[i].string_field, 
             arrayInfo.base[i].integer_field, arrayInfo.base[i].float_field);
