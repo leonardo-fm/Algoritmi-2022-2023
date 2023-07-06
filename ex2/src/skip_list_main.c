@@ -5,22 +5,29 @@
 static int compar_int(const void *val1, const void *val2);
 
 int main(int argc, char *argv[]) {
-    
+    setvbuf(stdout, NULL, _IONBF, 0);
+
     struct SkipList *list = NULL;
     new_skiplist(&list, 10, compar_int);
+    /*
     printf("Created new skiplist, %u\n", list);
-    fflush(stdout);
-    for (int i = 0; i < 100; i++) {
-        int *newItem = (int *)malloc(sizeof(int));
-        *newItem = rand() % 1000;
-        insert_skiplist(list, newItem);
-        printf("Added item %i\n", *newItem);
-        fflush(stdout); 
+    for (int i = 0; i < 10; i++) {
+        printf("Main\n");
+        insert_skiplist(list, rand() % 1000);
     }
+    */
+    insert_skiplist(list, 100);
+    insert_skiplist(list, 885);
+
+    printf("Start searching...\n");
+
+    int *response1 = (int *)search_skiplist(list, 885);
+    int *response2 = (int *)search_skiplist(list, 1100);
+    printf("R1:%i, R2:%i\n", response1, response2);
+
     clear_skiplist(&list);
     printf("cleared skiplist\n");
-    fflush(stdout);
-    
+
     printf("Finish\n");
     return 0;
 }

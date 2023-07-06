@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "skip_list.h": "c"
-    }
+    },
+    "C_Cpp.errorSquiggles": "disabled"
 }
