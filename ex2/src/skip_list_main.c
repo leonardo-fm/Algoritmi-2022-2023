@@ -9,22 +9,18 @@ int main(int argc, char *argv[]) {
 
     struct SkipList *list = NULL;
     new_skiplist(&list, 10, compar_int);
-    /*
-    printf("Created new skiplist, %u\n", list);
-    for (int i = 0; i < 10; i++) {
-        printf("Main\n");
+    
+    for (int i = 0; i < 40; i++) {
         insert_skiplist(list, rand() % 1000);
     }
-    */
-    insert_skiplist(list, 100);
+    insert_skiplist(list, 1);
     insert_skiplist(list, 885);
-
-    printf("Start searching...\n");
 
     int *response1 = (int *)search_skiplist(list, 885);
     int *response2 = (int *)search_skiplist(list, 1100);
-    printf("R1:%i, R2:%i\n", response1, response2);
+    int *response3 = (int *)search_skiplist(list, 1);
 
+    printf("start cleared skiplist\n");
     clear_skiplist(&list);
     printf("cleared skiplist\n");
 
