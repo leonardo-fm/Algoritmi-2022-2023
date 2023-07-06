@@ -14,9 +14,9 @@ struct Node {
     void *item;
 };
 
-void new_skiplist(struct SkipList *list, size_t max_height, int (*compar)(const void*, const void*));
+void new_skiplist(struct SkipList **list, size_t max_height, int (*compar)(const void*, const void*));
 
-void clear_skiplist(struct SkipList *list);
+void clear_skiplist(struct SkipList **list);
 
 void insert_skiplist(struct SkipList *list, void *item);
 

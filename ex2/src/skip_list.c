@@ -4,10 +4,10 @@
 
 static size_t random_level(size_t max_height);
 static struct Node* create_node(void *item, size_t lvl);
-static void clear_node(struct Node *node);
+static void clear_node(struct Node *node, size_t k);
 
-void new_skiplist(struct SkipList *list, size_t max_height, int (*compar)(const void*, const void*)) {
-    if(max_height > 0) {
+void new_skiplist(struct SkipList **list, size_t max_height, int (*compar)(const void*, const void*)) {
+    if(max_height <= 0) {
         fprintf(stderr, "new_skiplist: the max_height must be greater then 0");
         exit(EXIT_FAILURE);
     }
@@ -17,28 +17,43 @@ void new_skiplist(struct SkipList *list, size_t max_height, int (*compar)(const 
         exit(EXIT_FAILURE);
     }
 
-    list = (struct SkipList *)malloc(sizeof(struct SkipList));
-    list->max_height = max_height;
-    list->compare = compar;
+    *list = (struct SkipList *)malloc(sizeof(struct SkipList));
+    (*list)->max_height = max_height;
+    (*list)->compare = compar;
 }
 
-void clear_skiplist(struct SkipList *list) {
-    for (int i = 0; i < list->max_level - 1; i++) {
-        clear_node(list->heads[i]);
+void clear_skiplist(struct SkipList **list) {
+    if(list == NULL){
+        fprintf(stderr, "clear_skiplist: the list parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i = 0; i < (*list)->max_level - 1; i++) {
+        clear_node((*list)->heads[i], i);
     }
     free(list);
 }
 
 void insert_skiplist(struct SkipList *list, void *item) {
+    if(list == NULL){
+        fprintf(stderr, "insert_skiplist: the list parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if(item == NULL){
+        fprintf(stderr, "insert_skiplist: the item parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
     struct Node *newNode = create_node(item, random_level(list->max_height));
     if (newNode->size > list->max_level) {
         list->max_level = newNode->size;
     }
 
     struct Node **currentNode = list->heads;
-    for (int i = list->max_level - 1; i >= 0; i--) {
+    for (int i = (int)list->max_level - 1; i >= 0; i--) {
         if (currentNode[i] == NULL || currentNode[i]->item >= item) {
-            if (newNode->size >= i) {
+            if (newNode->size >= (size_t)i) {
                 newNode->next[i] = currentNode[i];
                 currentNode[i] = newNode;
             }          
@@ -50,8 +65,18 @@ void insert_skiplist(struct SkipList *list, void *item) {
 }
 
 const void* search_skiplist(struct SkipList *list, void *item) {
+    if(list == NULL){
+        fprintf(stderr, "search_skiplist: the list parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
+    if(item == NULL){
+        fprintf(stderr, "search_skiplist: the item parameter is a null pointer");
+        exit(EXIT_FAILURE);
+    }
+
     struct Node **currentNode = list->heads;
-    for (int i = list->max_level - 1; i >= 0; i--) {
+    for (int i = (int)list->max_level - 1; i >= 0; i--) {
         while (currentNode[i]->next[i]->item != NULL
             && list->compare(currentNode[i]->next[i]->item, item) <= 0) {
             currentNode = currentNode[i]->next;
@@ -80,9 +105,9 @@ static struct Node* create_node(void *item, size_t lvl) {
     return newNode;
 }
 
-static void clear_node(struct Node *node) {
+static void clear_node(struct Node *node, size_t k) {
     if (node->next != NULL) {
-        clear_node(node->next);
+        clear_node(node->next[k], k);
     }
     free(node);
 }
