@@ -30,7 +30,7 @@ void new_skiplist(struct SkipList **list, size_t max_height, int (*compar)(const
         fprintf(stderr, "create_node: unable to allocate memory for creating new heands");
         exit(EXIT_FAILURE);
     }
-    
+
     for (size_t i = 0; i < max_height; i++) {
         (*list)->heads[i] = NULL;
     }
@@ -99,7 +99,7 @@ const void* search_skiplist(struct SkipList *list, void *item) {
         }
     }
     
-    if (currentNode[0] != NULL && currentNode[0]->item == item) {
+    if (currentNode[0] != NULL && list->compare(currentNode[0]->item, item) == 0) {
         return currentNode[0]->item;
     } else {
         return NULL;
