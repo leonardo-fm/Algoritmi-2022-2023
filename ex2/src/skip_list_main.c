@@ -1,34 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "skip_list.h"
 
-static int compar_int(const void *val1, const void *val2);
+static int compar_string(const void *val1, const void *val2);
 
 int main(int argc, char *argv[]) {
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    struct SkipList *list = NULL;
-    new_skiplist(&list, 10, compar_int);
-    
-    for (int i = 0; i < 40; i++) {
-        insert_skiplist(list, rand() % 1000);
-    }
-    insert_skiplist(list, 1);
-    insert_skiplist(list, 885);
+    //struct SkipList *list = NULL;
+    //new_skiplist(&list, 10, compar_int);
 
-    int *response1 = (int *)search_skiplist(list, 885);
-    int *response2 = (int *)search_skiplist(list, 1100);
-    int *response3 = (int *)search_skiplist(list, 1);
-
-    printf("start cleared skiplist\n");
-    clear_skiplist(&list);
-    printf("cleared skiplist\n");
-
-    printf("Finish\n");
     return 0;
 }
 
-static int compar_int(const void *val1, const void *val2) {
+static int compar_string(const void *val1, const void *val2) {
     if(val1 == NULL){
         fprintf(stderr,"compar_int: the first parameter is a null pointer");
         exit(EXIT_FAILURE);
@@ -39,10 +25,5 @@ static int compar_int(const void *val1, const void *val2) {
         exit(EXIT_FAILURE);
     }
     
-    if ((int *)val1 > (int *)val2)
-        return 1;
-    else if ((int *)val1 < (int *)val2)
-        return -1;
-    else
-        return 0;
+    return strcmp((char *)val1, (char *)val2);
 }
