@@ -25,7 +25,7 @@ struct ReportData {
     size_t k;
 };
 
-static void general_case(struct Record *base, size_t iterations, size_t nitems, int col, char *dataFinish);
+static void general_case(struct Record *base, size_t iterations, size_t offset, size_t nitems, int col, char *dataFinish);
 static struct ArrayInfo extract_data(char *csvPath);
 static void write_header(char *fileOutputPath);
 static void save_data(struct ReportData reportData, char *fileOutputPath);
@@ -53,26 +53,26 @@ int main(int argc, char *argv[]) {
     write_header(dataFinish);
 
     // Act
-    general_case(arrayInfo.base, 15, arrayInfo.nitems, 1, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems, 3, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 1, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 2, 3, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 1, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 2, dataFinish);
-    general_case(arrayInfo.base, 15, arrayInfo.nitems / 4, 3, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems, 1, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems, 2, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems, 3, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 2, 1, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 2, 2, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 2, 3, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 4, 1, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 4, 2, dataFinish);
+    general_case(arrayInfo.base, 31, 0, arrayInfo.nitems / 4, 3, dataFinish);
 
     printf("Finish collecting data!\n");
     return 0;
 }
 
-static void general_case(struct Record *base, size_t iterations, size_t nitems, int col, char *dataFinish) {
+static void general_case(struct Record *base, size_t iterations, size_t offset, size_t nitems, int col, char *dataFinish) {
     clock_t start, end;
     double cpuTimeUsed;
     size_t k = 0;
 
-    for (k = 0; k < iterations; k++) {
+    for (k = offset; k < iterations + offset; k++) {
         printf("Sorting case %i-%lli => %lli/%lli\n", col, nitems, k + 1, iterations);
         fflush(stdout);
 

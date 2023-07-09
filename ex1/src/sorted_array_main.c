@@ -37,22 +37,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    clock_t start, end;
-    double cpu_time_used;
-
-    printf("Extracting data from %s...\n", argv[1]);
-    fflush(stdout);
-    start = clock();
     struct ArrayInfo arrayInfo = extract_data(argv[1]);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of extraction: %.2f seconds\n", cpu_time_used);
-    printf("Extracted %lli items, the size of each item is %lli byts\n", arrayInfo.nitems, arrayInfo.size);
-    fflush(stdout);
 
-    printf("Starting to sort the array...\n");
-    fflush(stdout);
-    start = clock();
     switch (atoi(argv[3]))
     {
         case 1:
@@ -65,20 +51,8 @@ int main(int argc, char *argv[]) {
             merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_float);
             break;
     }
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of sorting: %.2f seconds\n", cpu_time_used);
 
-
-    printf("Start saving data...\n");
-    fflush(stdout);
-    start = clock();
     save_data(arrayInfo, argv[2]);
-    end = clock();
-    cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-    printf("Time of saiving: %.2f seconds\n", cpu_time_used);
-    printf("Succesfully saived the data int the file: %s\n", argv[2]);
-    fflush(stdout);
 
     return 0;
 }
