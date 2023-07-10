@@ -1,3 +1,5 @@
+package priorityqueue;
+
 public interface AbstractQueue<T> {
     // controlla se la coda è vuota -- O(1)
     public boolean empty(); 
@@ -9,7 +11,7 @@ public interface AbstractQueue<T> {
     public boolean contains(T e); 
     
     // accede all'elemento in cima alla coda -- O(1)
-    public E top(); 
+    public T top(); 
     
     // rimuove l'elemento in cima alla coda -- O(logN)
     public void pop(); 

@@ -10,7 +10,7 @@ import java.util.HashMap;
  * @author ferrero-merlino
  * @param <T>: type of the priority queue elements
  */
-public class PriorityQueue<T> implements AbstractQueue {
+public class PriorityQueue<T> implements AbstractQueue<T> {
   ArrayList<T> array = null;
   Comparator<? super T> comparator = null;
   HashMap<Integer, T> elementsMap = new HashMap<Integer, T>();
@@ -31,7 +31,7 @@ public class PriorityQueue<T> implements AbstractQueue {
   /**
   * @return true iff this priority queue is empty
   */
-  public boolean isEmpty() {
+  public boolean empty() {
     return (this.array).isEmpty();
   }
 
@@ -41,7 +41,7 @@ public class PriorityQueue<T> implements AbstractQueue {
   */
   public boolean contains(T e) {
     if(e == null) {
-      throw new PriorityQueueException("push: element parameter cannot be null");
+      return false;
     }
     return getFromHashMap(e) != null;
   }
@@ -50,9 +50,9 @@ public class PriorityQueue<T> implements AbstractQueue {
   * @return true iff the item has been push
   * @throws priorityqueue.PriorityQueueException iff the parameter is null
   */
-  public boolean push(T e) throws PriorityQueueException {
+  public boolean push(T e) {
     if(e == null) {
-      throw new PriorityQueueException("push: element parameter cannot be null");
+      return false;
     }
     
     boolean added = (this.array).add(e);
@@ -71,7 +71,7 @@ public class PriorityQueue<T> implements AbstractQueue {
   * @return: the first element, if the queue is empty return null.
   */
   public T top(){
-    if ((this.array).size > 0) {
+    if (!empty()) {
       return (this.array).get(0);
     }
     return null;
@@ -81,9 +81,9 @@ public class PriorityQueue<T> implements AbstractQueue {
   * @throws priorityqueue.PriorityQueueException iff the queue size is 0
   */
   public void pop(){
-    if ((this.array).size == 0) {
-      throw new PriorityQueueException("pop: no elements in the queue");
-    } else if ((this.array).size == 1) {
+    if ((this.array).size() == 0) {
+      return;
+    } else if ((this.array).size() == 1) {
       removeFromHashMap((this.array).get(0));
       (this.array).remove(0);
       return;  
@@ -102,10 +102,10 @@ public class PriorityQueue<T> implements AbstractQueue {
   */
   public boolean remove(T e) {
     if(e == null) {
-      throw new PriorityQueueException("push: element parameter cannot be null");
+      return false;
     }
 
-    if ((this.array).size == 0 || !contains(e)) {
+    if ((this.array).size() == 0 || !contains(e)) {
       return false;
     }
     
@@ -114,7 +114,7 @@ public class PriorityQueue<T> implements AbstractQueue {
     removeFromHashMap(e);
     (this.array).remove((this.array).size() - 1);
 
-    if (eIndex == 0 || (this.arra).compare((this.array).get(eIndex), (this.array).get((eIndex - 1) / 2) >= 0) {
+    if (eIndex == 0 || (this.comparator).compare((this.array).get(eIndex), (this.array).get((eIndex - 1) / 2)) >= 0) {
       sink((this.array).get(eIndex), eIndex);
     } else {
       bubbleUp((this.array).get(eIndex), eIndex);
@@ -172,18 +172,18 @@ public class PriorityQueue<T> implements AbstractQueue {
 
   // Add an element to the hash map
   private boolean addToHashMap(T e) {
-    T el = elementsMap.put(hashCode(e), e);
+    T el = elementsMap.put(e.hashCode(), e);
     return el != null;
   }
 
   // remove an element from the hash map
   private boolean removeFromHashMap(T e) {
-    T el = elementsMap.remove(hashCode(e));
+    T el = elementsMap.remove(e.hashCode());
     return el != null;
   }
 
   // Return an element iff present in the hash map, otherwise null
   private T getFromHashMap(T e) {
-    return elementsMap.get(hashCode(e));
+    return elementsMap.get(e.hashCode());
   }
 }

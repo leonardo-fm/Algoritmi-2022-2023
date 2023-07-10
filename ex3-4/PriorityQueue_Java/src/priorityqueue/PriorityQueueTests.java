@@ -38,43 +38,25 @@ public class PriorityQueueTests {
   
   @Test
   public void testIsEmptyZeroEl(){
-    assertTrue(priorityQueue.isEmpty());
+    assertTrue(priorityQueue.empty());
   }
   
   @Test
-  public void testIsEmptyOneEl() throws Exception{
+  public void testIsEmptyOneEl() throws Exception {
     priorityQueue.push(i1);
-    assertFalse(priorityQueue.isEmpty());
-  }
-  
-  @Test
-  public void testSizeZeroEl() throws Exception{
-    assertEquals(0, priorityQueue.size());
-  }
-  
-  @Test
-  public void testSizeOneEl() throws Exception{
-    priorityQueue.push(i1);
-    assertEquals(1, priorityQueue.size());
-  }
-  
-  @Test
-  public void testSizeTwoEl() throws Exception{
-    priorityQueue.push(i1);
-    priorityQueue.push(i2);
-    assertEquals(2, priorityQueue.size());
+    assertFalse(priorityQueue.empty());
   }
   
   @Test
   //It directly accesses the PriorityQueue instance variable priorityQueue.array
-  public void testAddOneEl() throws Exception{
+  public void testAddOneEl() throws Exception {
     priorityQueue.push(i1);
     assertEquals(i1, priorityQueue.array.get(0));
   }
   
   @Test
   //It directly accesses the PriorityQueue instance variable priorityQueue.array
-  public void testAddThreeElAddedInOrder() throws Exception{
+  public void testAddThreeElAddedInOrder() throws Exception {
     Integer[] expectedArray = { i4, i1, i2, i3 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
@@ -85,7 +67,7 @@ public class PriorityQueueTests {
 
   @Test
   //It directly accesses the PriorityQueue instance variable priorityQueue.array
-  public void testAddThreeElAddedInReverseOrder() throws Exception{
+  public void testAddThreeElAddedInReverseOrder() throws Exception {
     Integer[] expectedArray = { i4, i2, i1, i3 };
     priorityQueue.push(i3);
     priorityQueue.push(i2);
@@ -96,7 +78,7 @@ public class PriorityQueueTests {
 
   @Test
   //It directly accesses the PriorityQueue instance variable priorityQueue.array
-  public void testAddThreeElAllEqual() throws Exception{
+  public void testAddThreeElAllEqual() throws Exception {
     Integer[] expectedArray = { i2, i2, i2 };
     priorityQueue.push(i2);
     priorityQueue.push(i2);
@@ -105,58 +87,58 @@ public class PriorityQueueTests {
   }
 
   @Test
-  public void testContainsNoEl() throws Exception{
+  public void testContainsNoEl() throws Exception {
     assertFalse(priorityQueue.contains(i1));
   }
 
   @Test
-  public void testContainsEl() throws Exception{
+  public void testContainsEl() throws Exception {
     priorityQueue.push(i1);
     assertTrue(priorityQueue.contains(i1));
   }
 
   @Test
-  public void testContainsNoEl() throws Exception{
+  public void testContainsElRemoved() throws Exception {
     priorityQueue.push(i1);
     assertFalse(priorityQueue.contains(i2));
   }
 
   @Test
-  public void testTopEl() throws Exception{
+  public void testTopEl() throws Exception {
     priorityQueue.push(i1);
     assertEquals(i1, priorityQueue.top());
   }
 
   @Test
-  public void testTopTwoEl() throws Exception{
+  public void testTopTwoEl() throws Exception {
     priorityQueue.push(i1);
     priorityQueue.push(i4);
     assertEquals(i4, priorityQueue.top());
   }
 
   @Test
-  public void testTopNoEl() throws Exception{
+  public void testTopNoEl() throws Exception {
     assertEquals(null, priorityQueue.top());
   }
   
   @Test
-  public void testPopEl() throws Exception{
+  public void testPopEl() throws Exception {
     priorityQueue.push(i1);
     priorityQueue.pop();
-    assertTrue(priorityQueue.isEmpty());
+    assertTrue(priorityQueue.empty());
   }
 
   @Test
-  public void testPopTwoEl() throws Exception{
+  public void testPopTwoEl() throws Exception {
     priorityQueue.push(i1);
     priorityQueue.push(i2);
     priorityQueue.pop();
     priorityQueue.pop();
-    assertTrue(priorityQueue.isEmpty());
+    assertTrue(priorityQueue.empty());
   }
 
   @Test
-  public void testPopElFirst() throws Exception{
+  public void testPopElFirst() throws Exception {
     Integer[] expectedArray = { i1, i3, i2 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
@@ -167,7 +149,7 @@ public class PriorityQueueTests {
   }
 
   @Test
-  public void testRemoveElFirst() throws Exception{
+  public void testRemoveElFirst() throws Exception {
     Integer[] expectedArray = { i1, i3, i2 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
@@ -178,7 +160,7 @@ public class PriorityQueueTests {
   }
 
   @Test
-  public void testRemoveNoEl() throws Exception{
+  public void testRemoveNoEl() throws Exception {
     Integer[] expectedArray = { i1 };
     priorityQueue.push(i1);
     priorityQueue.remove(i3);
@@ -186,12 +168,12 @@ public class PriorityQueueTests {
   }
   
   @Test
-  public void testRemoveNoElBool() throws Exception{
+  public void testRemoveNoElBool() throws Exception {
     assertFalse(priorityQueue.remove(i1));
   }
   
   @Test
-  public void testRemoveElBool() throws Exception{
+  public void testRemoveElBool() throws Exception {
     priorityQueue.push(i1);
     assertTrue(priorityQueue.remove(i1));
   }
