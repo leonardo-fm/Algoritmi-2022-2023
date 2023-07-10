@@ -4,6 +4,9 @@
 #include <time.h>
 #include "merge_binary_insertion_sort.h"
 
+#define ARGUMENT_NUMBER 5
+#define RECORD_FIELDS_NUMBER 4
+
 struct Record {
     int id;
     char* string_field;
@@ -22,9 +25,6 @@ static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath);
 static int compar_int(const void *val1, const void *val2);
 static int compar_float(const void *val1, const void *val2);
 static int compar_string(const void *val1, const void *val2);
-
-#define ARGUMENT_NUMBER 5
-#define RECORD_FIELDS_NUMBER 4
 
 int main(int argc, char *argv[]) {
     if (argc != ARGUMENT_NUMBER) {
@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+// Extract the data from the csv file and return all the needed values
 static struct ArrayInfo extract_data(char *csvPath) {
     FILE* file = fopen(csvPath, "r");
     if (file == NULL) {
@@ -105,6 +106,7 @@ static struct ArrayInfo extract_data(char *csvPath) {
     return arrayInfo;
 }
 
+// Save all the data of the struct ArrayInfo in a file
 static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath) {
     FILE* file = fopen(fileOutputPath, "w");
     if (file == NULL) {
@@ -124,6 +126,7 @@ static void save_data(struct ArrayInfo arrayInfo, char *fileOutputPath) {
     fclose(file);
 }
 
+// Function to compare integer values
 static int compar_int(const void *val1, const void *val2) {
     if(val1 == NULL){
         fprintf(stderr,"compar_int: the first parameter is a null pointer");
@@ -145,6 +148,7 @@ static int compar_int(const void *val1, const void *val2) {
         return 0;
 }
 
+// Function to compare floats values
 static int compar_float(const void *val1, const void *val2) {
     if(val1 == NULL){
         fprintf(stderr,"compar_float: the first parameter is a null pointer");
@@ -166,6 +170,7 @@ static int compar_float(const void *val1, const void *val2) {
         return 0;
 }
 
+// Function to compare string values
 static int compar_string(const void *val1, const void *val2) {
     if(val1 == NULL){
         fprintf(stderr,"compar_string: the first parameter is a null pointer");

@@ -29,6 +29,7 @@ void merge_binary_insertion_sort(void *base, size_t nitems, size_t size, size_t 
     }
 }
 
+// Validate the args 
 static void args_check(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
     if (base == NULL) {
       fprintf(stderr, "merge_binary_insertion_sort: the pointer of the array can't be NULL");
@@ -53,6 +54,7 @@ static void args_check(void *base, size_t nitems, size_t size, int (*compar)(con
     argsChecked = 1;
 }
 
+// The merge sort algorithm
 static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*compar)(const void*, const void*)) {
     size_t firstHalfNitems = nitems / 2;
     size_t secondHalfNitems = nitems - firstHalfNitems;
@@ -82,6 +84,7 @@ static void merge_sort(void *base, size_t nitems, size_t size, size_t k, int (*c
     free(arr2);
 }
 
+// The merge algorithm of the merge sort
 static void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t arr2Nitems, size_t size, int (*compar)(const void*, const void*)) {
     unsigned long i = 0, j = 0;
 
@@ -122,6 +125,7 @@ static void merge(void *base, void *arr1, size_t arr1Nitems, void *arr2, size_t 
     move_pointer(&base, -(int)((i + j) * size));
 }
 
+// The binary insertion sort algorithm
 static void binary_insertion_sort(void *base, size_t nitems, size_t size, int (*compar)(const void*, const void*)) {
     unsigned long i = 1, j;
     void *currentPointer = base;

@@ -37,6 +37,8 @@ int main(int argc, char *argv[]) {
     return 0;
 }
 
+// Load the dictionary and then check the file to be correct and print all words
+// that are not present in the dictionary
 void find_errors(FILE *dictfile, FILE *textfile, size_t max_height) {
     struct SkipList *list = NULL;
     new_skiplist(&list, max_height, compar_string);
@@ -72,6 +74,7 @@ void find_errors(FILE *dictfile, FILE *textfile, size_t max_height) {
     }
 }
 
+// Function to compare strings values
 static int compar_string(const void *val1, const void *val2) {
     if(val1 == NULL){
         fprintf(stderr,"compar_int: the first parameter is a null pointer");
@@ -86,6 +89,7 @@ static int compar_string(const void *val1, const void *val2) {
     return strcmp((char *)val1, (char *)val2);
 }
 
+// Set all letters to lower inside a given string
 static void to_lower_case(char* str) {
     int i = 0;
     while (str[i]) {

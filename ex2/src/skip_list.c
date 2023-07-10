@@ -106,6 +106,7 @@ const void* search_skiplist(struct SkipList *list, void *item) {
     }
 }
 
+// Generate a random level for the new item, limited by max_height
 static size_t random_level(size_t max_height) {
     size_t lvl = 1;
     while ((double)rand() / (double)RAND_MAX < 0.5 && lvl < max_height) {
@@ -114,6 +115,7 @@ static size_t random_level(size_t max_height) {
     return lvl;
 }
 
+// Given the item pointer and the level, return a new node
 static struct Node* create_node(void *item, size_t lvl) {
     struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
     if (newNode == NULL) {
@@ -132,6 +134,7 @@ static struct Node* create_node(void *item, size_t lvl) {
     return newNode;
 }
 
+// Free the memory allocated for a given node
 static void clear_node(struct Node *node) {
     if (node->next[0] != NULL) {
         clear_node(node->next[0]);
