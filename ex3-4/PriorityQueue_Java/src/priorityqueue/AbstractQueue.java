@@ -1,5 +1,8 @@
 package priorityqueue;
 
+/**
+ * Interface use to implement the priority queue
+ */
 public interface AbstractQueue<T> {
     // controlla se la coda è vuota -- O(1)
     public boolean empty(); 

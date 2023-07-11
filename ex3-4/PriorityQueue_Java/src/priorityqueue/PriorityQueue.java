@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import javax.xml.transform.Source;
+
 /**
  * It represents a priority queue. Elements in the queue are always ordered according
  * to a criterion specified by a comparator at creation time.
@@ -30,44 +32,47 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   }
  
   /**
-  * @return true iff this priority queue is empty
-  */
+   * Return a boolean that indicate if the queue is empty
+   * @return true iff this priority queue is empty
+   */
   public boolean empty() {
     return (this.array).isEmpty();
   }
-
-  /**
-  * @return true iff the element is in the queue
-  * @throws priorityqueue.PriorityQueueException iff the parameter is null
-  */
-  public boolean contains(T e) {
-    if (e == null) {
-      return false;
-    }
-    return getFromHashMap(e) != null;
-  }
  
   /**
-  * @return true iff the item has been push
-  * @throws priorityqueue.PriorityQueueException iff the parameter is null
-  */
+   * Push a new element into the queue
+   * @return true iff the item has been push false otherwhise
+   */
   public boolean push(T e) {
     if (e == null) {
       return false;
     }
-    boolean added = (this.array).add(e);
-   
-    if (added == false) return false;
-    addToHashMap(e);
 
+    boolean added = (this.array).add(e);
+    if (added == false) return false;
     int eIndex = (this.array).size() - 1;
+    addToHashMap(e, eIndex);
+
     bubbleUp(e, eIndex);
     return added;
   }
 
   /**
-  * @return: the first element, if the queue is empty return null.
-  */
+   * Return a boolean that indicate if en element is present in the queue
+   * @return true iff the element is in the queue false otherwise
+   */
+  public boolean contains(T e) {
+    if (e == null) {
+      return false;
+    }
+
+    return getFromHashMap(e) != null;
+  }
+
+  /**
+   * return the first element in the queue
+   * @return: the first element, iff the queue is empty return null.
+   */
   public T top(){
     if (!empty()) {
       return (this.array).get(0);
@@ -76,28 +81,24 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   }
 
   /**
-  * @throws priorityqueue.PriorityQueueException iff the queue size is 0
-  */
+   * Remove the top element in the queue
+   */
   public void pop(){
-    if ((this.array).size() == 0) {
+    if (empty()) {
       return;
-    } else if ((this.array).size() == 1) {
-      removeFromHashMap((this.array).get(0));
-      (this.array).remove(0);
-      return;  
     }
     
     int lastItemIndex = (this.array).size() - 1;
     swap(0, lastItemIndex);
-    removeFromHashMap((this.array).get(lastItemIndex));
+    removeFromHashMap((this.array).get(lastItemIndex), lastItemIndex);
     (this.array).remove(lastItemIndex);
     sink(top(), 0);
   }
 
   /**
-  * @return true iff the element has been removed
-  * @throws priorityqueue.PriorityQueueException iff the parameter is null
-  */
+   * Remove an element in the queue iff present
+   * @return true iff the element has been removed
+   */
   public boolean remove(T e) {
     if (e == null) {
       return false;
@@ -107,10 +108,13 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
       return false;
     }
     
-    int eIndex = (this.array).indexOf(e);
+    int eIndex = getIndexHashMap(e);
     swap(eIndex, (this.array).size() - 1);
-    removeFromHashMap(e);
+    removeFromHashMap(e, eIndex);
     (this.array).remove((this.array).size() - 1);
+    if (empty()) {
+      return true;
+    }
 
     if (eIndex == 0 || (this.comparator).compare((this.array).get(eIndex), (this.array).get((eIndex - 1) / 2)) >= 0) {
       sink((this.array).get(eIndex), eIndex);
@@ -121,14 +125,24 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
     return true;
   }
 
-  // Given two indexs swap the elements
-  private void swap(int dest, int source) {
-    T tmp = (this.array).get(dest);
-    (this.array).set(dest, (this.array).get(source));
-    (this.array).set(source, tmp);
+  /**
+   * Given two indexs swap the elements
+   * @param destinationIndex
+   * @param sourceIndex
+   */
+  private void swap(int destinationIndex, int sourceIndex) {
+    T tmp = (this.array).get(destinationIndex);
+    (this.array).set(destinationIndex, (this.array).get(sourceIndex));
+    (this.array).set(sourceIndex, tmp);
+    changeIndexHashMap((this.array).get(destinationIndex), sourceIndex, destinationIndex);
+    changeIndexHashMap((this.array).get(sourceIndex), destinationIndex, sourceIndex);
   }
 
-  // bubbleup an element to the queue
+  /**
+   * Bubbleup an element to the queue
+   * @param e
+   * @param eIndex
+   */
   private void bubbleUp(T e, int eIndex) {
     if (eIndex == 0 || (this.array).isEmpty()) {
       return;
@@ -141,15 +155,21 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
     }
   }
 
-  // Sink an element to the queue
+  /**
+   * Sink an element to the queue
+   * @param e
+   * @param eIndex
+   */
   private void sink(T e, int eIndex) {
     int leftElementIndex = (eIndex * 2) + 1;
     int rightElementIndex = leftElementIndex + 1;    
-    if (leftElementIndex >= (this.array).size()) {
+    if (leftElementIndex >= ((this.array).size() - 1)) {
       return;
     }
+
     boolean eGreaterL =  (this.comparator).compare(e, (this.array).get(leftElementIndex)) > 0; 
     boolean eGreaterR = (this.comparator).compare(e, (this.array).get(rightElementIndex)) > 0;
+    
     if (eGreaterL && eGreaterR) {
       if ((this.comparator).compare((this.array).get(leftElementIndex), (this.array).get(rightElementIndex)) >= 0) {
         // L is greater or equal then R
@@ -169,23 +189,37 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
     }
   }
 
-  // Add an element to the hash map
-  private boolean addToHashMap(T e) {
+  /**
+   * Add an element to the hash map 
+   * if element already present add ammount of that item
+   * @param e
+   * @param index index of the element e in the array
+   * @return true iff added false otherwise
+   */
+  private boolean addToHashMap(T e, int index) {
     Record<T> record = getFromHashMap(e);
     if (record != null) {
-      record.setAmmount(record.getAmmount() + 1);  
+      record.setAmmount(record.getAmmount() + 1);
+      record.addIndex(index);
     } else {
-      record = new Record<T>(e);
+      record = new Record<T>(e, index);
     }
     elementsMap.put(record.getKey(), record);
     return true;
   }
 
-  // remove an element from the hash map
-  private boolean removeFromHashMap(T e) {
+  /**
+   * Remove an element from the hash map
+   * if element.ammount > 1 remove 1 to the total ammount
+   * @param e
+   * @param index index of the element e in the array
+   * @return true iff removed false otherwise
+   */
+  private boolean removeFromHashMap(T e, int index) {
     Record<T> record = getFromHashMap(e);
     if (record.getAmmount() > 1) {
       record.setAmmount(record.getAmmount() - 1);
+      record.removeIndex(index);
       elementsMap.put(record.getKey(), record);
       return true;
     } else {
@@ -194,8 +228,33 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
     }
   }
 
-  // Return an element iff present in the hash map, otherwise null
+  /**
+   * Return an element from the hash map
+   * @param e
+   * @return iff present element T otherwhise null
+   */
   private Record<T> getFromHashMap(T e) {
     return elementsMap.get(e.hashCode());
+  }
+
+  /**
+   * Change the index of an element with a new one
+   * @param e
+   * @param oldIndex
+   * @param newIndex
+   */
+  private void changeIndexHashMap(T e, int oldIndex, int newIndex) {
+    Record<T> record = elementsMap.get(e.hashCode());
+    record.removeIndex(oldIndex);
+    record.addIndex(newIndex);
+  }
+
+  /**
+   * Return the first index of an element
+   * @param e
+   */
+  private Integer getIndexHashMap(T e) {
+    Record<T> record = elementsMap.get(e.hashCode());
+    return (record.getIndexs()).get(0);
   }
 }

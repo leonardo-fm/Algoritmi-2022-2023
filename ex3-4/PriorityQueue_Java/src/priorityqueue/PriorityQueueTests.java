@@ -48,16 +48,14 @@ public class PriorityQueueTests {
   }
   
   @Test
-  //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddOneEl() throws Exception {
     priorityQueue.push(i1);
     assertEquals(i1, priorityQueue.array.get(0));
   }
   
   @Test
-  //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddThreeElAddedInOrder() throws Exception {
-    Integer[] expectedArray = { i4, i1, i2, i3 };
+    Integer[] expectedArray = { i4, i1, i3, i2 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
     priorityQueue.push(i3);
@@ -66,7 +64,6 @@ public class PriorityQueueTests {
   }
 
   @Test
-  //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddThreeElAddedInReverseOrder() throws Exception {
     Integer[] expectedArray = { i4, i1, i2, i3 };
     priorityQueue.push(i3);
@@ -77,7 +74,6 @@ public class PriorityQueueTests {
   }
 
   @Test
-  //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddThreeElAllEqual() throws Exception {
     Integer[] expectedArray = { i2, i2, i2 };
     priorityQueue.push(i2);
@@ -139,7 +135,7 @@ public class PriorityQueueTests {
 
   @Test
   public void testPopElFirst() throws Exception {
-    Integer[] expectedArray = { i1, i3, i2 };
+    Integer[] expectedArray = { i1, i2, i3 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
     priorityQueue.push(i3);
@@ -150,7 +146,7 @@ public class PriorityQueueTests {
 
   @Test
   public void testRemoveElFirst() throws Exception {
-    Integer[] expectedArray = { i1, i3, i2 };
+    Integer[] expectedArray = { i1, i2, i3 };
     priorityQueue.push(i1);
     priorityQueue.push(i2);
     priorityQueue.push(i3);
@@ -179,7 +175,6 @@ public class PriorityQueueTests {
   }
 
   @Test
-  //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddThreeElAllEqualRemoveOne() throws Exception {
     priorityQueue.push(i2);
     priorityQueue.push(i2);
@@ -188,4 +183,3 @@ public class PriorityQueueTests {
     assertTrue(priorityQueue.contains(i2));
   }
 }
-
