@@ -6,7 +6,7 @@
 
 ---PER COMPILARE LE CLASSI PER GLI UNIT TEST NEL PACKAGE priorityqueue---
 1) posizionarsi in .../PriorityQueue_Java/src
-2) javac -d ../classes -cp '.;../junit-4.12.jar;../hamcrest-core-1.3.jar' priorityqueue/*.java (ATTENZIONE: i classpath devono essere separati da ";" come in Windows, non da ":" come in Unix, inoltre, occorre mettere l'elenco dei classpath fra apici semplici!)
+2) javac -d ../classes -cp '.;../junit-4.12.jar;../hamcrest-core-1.3.jar' priorityqueue/*.java
 
 
 ***ESECUZIONE***

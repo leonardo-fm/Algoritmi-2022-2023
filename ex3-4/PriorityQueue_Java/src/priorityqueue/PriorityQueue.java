@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class PriorityQueue<T> implements AbstractQueue<T> {
   ArrayList<T> array = null;
   Comparator<? super T> comparator = null;
-  HashMap<Integer, T> elementsMap = new HashMap<Integer, T>();
+  HashMap<Integer, Record<T>> elementsMap = new HashMap<Integer, Record<T>>();
   
   /**
    * It creates an empty priority queue.
@@ -23,9 +23,10 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @throws PriorityQueueException if the parameter is null.
    */
   public PriorityQueue(Comparator<? super T> comparator) throws PriorityQueueException {
-    if(comparator == null) throw new PriorityQueueException("PriorityQueue constructor: comparator parameter cannot be null");
-    this.array = new ArrayList<>(); 
+    if (comparator == null) throw new PriorityQueueException("PriorityQueue constructor: comparator parameter cannot be null");
+    this.array = new ArrayList<T>(); 
     this.comparator = comparator;
+    this.elementsMap = new HashMap<Integer, Record<T>>();
   }
  
   /**
@@ -40,7 +41,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   * @throws priorityqueue.PriorityQueueException iff the parameter is null
   */
   public boolean contains(T e) {
-    if(e == null) {
+    if (e == null) {
       return false;
     }
     return getFromHashMap(e) != null;
@@ -51,17 +52,14 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   * @throws priorityqueue.PriorityQueueException iff the parameter is null
   */
   public boolean push(T e) {
-    if(e == null) {
+    if (e == null) {
       return false;
     }
-    
     boolean added = (this.array).add(e);
+   
     if (added == false) return false;
-    added = addToHashMap(e);
-    if (added == false) {
-      remove(e);
-      return false;
-    }
+    addToHashMap(e);
+
     int eIndex = (this.array).size() - 1;
     bubbleUp(e, eIndex);
     return added;
@@ -101,7 +99,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   * @throws priorityqueue.PriorityQueueException iff the parameter is null
   */
   public boolean remove(T e) {
-    if(e == null) {
+    if (e == null) {
       return false;
     }
 
@@ -132,11 +130,12 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
 
   // bubbleup an element to the queue
   private void bubbleUp(T e, int eIndex) {
-    if (eIndex == 0) {
+    if (eIndex == 0 || (this.array).isEmpty()) {
       return;
     }
+
     int fatherIndex = (eIndex - 1) / 2;
-    if ((this.comparator).compare(e, (this.array).get(fatherIndex)) > 0) {
+    if ((this.comparator).compare((this.array).get(fatherIndex), e) > 0) {
       swap(eIndex, fatherIndex);
       bubbleUp(e, fatherIndex);
     }
@@ -172,18 +171,31 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
 
   // Add an element to the hash map
   private boolean addToHashMap(T e) {
-    T el = elementsMap.put(e.hashCode(), e);
-    return el != null;
+    Record<T> record = getFromHashMap(e);
+    if (record != null) {
+      record.setAmmount(record.getAmmount() + 1);  
+    } else {
+      record = new Record<T>(e);
+    }
+    elementsMap.put(record.getKey(), record);
+    return true;
   }
 
   // remove an element from the hash map
   private boolean removeFromHashMap(T e) {
-    T el = elementsMap.remove(e.hashCode());
-    return el != null;
+    Record<T> record = getFromHashMap(e);
+    if (record.getAmmount() > 1) {
+      record.setAmmount(record.getAmmount() - 1);
+      elementsMap.put(record.getKey(), record);
+      return true;
+    } else {
+      elementsMap.remove(e.hashCode());
+      return record != null;
+    }
   }
 
   // Return an element iff present in the hash map, otherwise null
-  private T getFromHashMap(T e) {
+  private Record<T> getFromHashMap(T e) {
     return elementsMap.get(e.hashCode());
   }
 }

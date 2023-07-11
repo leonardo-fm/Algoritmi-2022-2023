@@ -33,7 +33,7 @@ public class PriorityQueueTests {
     i2 = 3;
     i3 = 5;
     i4 = -1;
-    priorityQueue = new PriorityQueue<>(new IntegerComparator());
+    priorityQueue = new PriorityQueue<Integer>(new IntegerComparator());
   }
   
   @Test
@@ -68,7 +68,7 @@ public class PriorityQueueTests {
   @Test
   //It directly accesses the PriorityQueue instance variable priorityQueue.array
   public void testAddThreeElAddedInReverseOrder() throws Exception {
-    Integer[] expectedArray = { i4, i2, i1, i3 };
+    Integer[] expectedArray = { i4, i1, i2, i3 };
     priorityQueue.push(i3);
     priorityQueue.push(i2);
     priorityQueue.push(i4);
@@ -176,6 +176,16 @@ public class PriorityQueueTests {
   public void testRemoveElBool() throws Exception {
     priorityQueue.push(i1);
     assertTrue(priorityQueue.remove(i1));
+  }
+
+  @Test
+  //It directly accesses the PriorityQueue instance variable priorityQueue.array
+  public void testAddThreeElAllEqualRemoveOne() throws Exception {
+    priorityQueue.push(i2);
+    priorityQueue.push(i2);
+    priorityQueue.push(i2);
+    priorityQueue.remove(i2);
+    assertTrue(priorityQueue.contains(i2));
   }
 }
 
