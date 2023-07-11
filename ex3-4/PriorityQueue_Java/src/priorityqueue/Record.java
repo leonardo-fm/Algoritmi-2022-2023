@@ -1,6 +1,6 @@
 package priorityqueue;
 
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * This calss is used inside the Priority Queue library for the hash map
@@ -19,7 +19,7 @@ public class Record<T> {
     /**
      * The index/s of the element/s in the queue
      */
-    private ArrayList<Integer> indexs;
+    private TreeSet<Integer> indexs;
 
     /**
      * The key of the item for the hash map
@@ -34,7 +34,7 @@ public class Record<T> {
     public Record(T value, Integer index) {
         this.value = value;
         this.ammount = 1;
-        this.indexs = new ArrayList<Integer>();
+        this.indexs = new TreeSet<Integer>();
         (this.indexs).add(index);
         this.key = value.hashCode();
     }
@@ -63,7 +63,7 @@ public class Record<T> {
     /**
      * @return the index/s
      */
-    public ArrayList<Integer> getIndexs() {
+    public TreeSet<Integer> getIndexs() {
         return this.indexs;
     }
 

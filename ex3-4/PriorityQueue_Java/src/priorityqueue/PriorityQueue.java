@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import javax.xml.transform.Source;
-
 /**
  * It represents a priority queue. Elements in the queue are always ordered according
  * to a criterion specified by a comparator at creation time.
@@ -255,6 +253,6 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    */
   private Integer getIndexHashMap(T e) {
     Record<T> record = elementsMap.get(e.hashCode());
-    return (record.getIndexs()).get(0);
+    return (record.getIndexs()).first();
   }
 }
