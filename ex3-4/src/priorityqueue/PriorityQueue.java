@@ -33,6 +33,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * Return a boolean that indicate if the queue is empty
    * @return true iff this priority queue is empty
    */
+  @Override
   public boolean empty() {
     return (this.array).isEmpty();
   }
@@ -41,6 +42,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * Push a new element into the queue
    * @return true iff the item has been push false otherwhise
    */
+  @Override
   public boolean push(T e) {
     if (e == null) {
       return false;
@@ -59,6 +61,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * Return a boolean that indicate if en element is present in the queue
    * @return true iff the element is in the queue false otherwise
    */
+  @Override
   public boolean contains(T e) {
     if (e == null) {
       return false;
@@ -71,6 +74,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * return the first element in the queue
    * @return: the first element, iff the queue is empty return null.
    */
+  @Override
   public T top(){
     if (!empty()) {
       return (this.array).get(0);
@@ -81,6 +85,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   /**
    * Remove the top element in the queue
    */
+  @Override
   public void pop(){
     if (empty()) {
       return;
@@ -97,6 +102,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * Remove an element in the queue iff present
    * @return true iff the element has been removed
    */
+  @Override
   public boolean remove(T e) {
     if (e == null) {
       return false;

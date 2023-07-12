@@ -1,6 +1,7 @@
 *.exe
 *.o
 *.csv
+*.class
 
 data/
 bin/
