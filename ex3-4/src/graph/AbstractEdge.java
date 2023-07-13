@@ -1,6 +1,6 @@
 package graph;
 
-public interface AbstractEdge<V,L> {
+public interface AbstractEdge<V, L> {
 	// il nodo di partenza dell'arco
 	public V getStart(); 
 

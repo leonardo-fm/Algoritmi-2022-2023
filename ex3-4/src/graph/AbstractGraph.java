@@ -2,7 +2,7 @@ package graph;
 
 import java.util.Collection;
 
-public interface AbstractGraph<V,L> {
+public interface AbstractGraph<V, L> {
   // dice se il grafo è diretto o meno -- O(1)
   public boolean isDirected(); 
   
@@ -43,5 +43,5 @@ public interface AbstractGraph<V,L> {
   public Collection<V> getNeighbours(V a); 
   
   // recupero dell'etichetta di un arco -- O(1) (*)
-  public L getLabel(V a, V b); 
+  public L getLabel(V a, V b);
 };

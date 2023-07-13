@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class PriorityQueue<T> implements AbstractQueue<T> {
   ArrayList<T> array = null;
   Comparator<? super T> comparator = null;
-  HashMap<Integer, Record<T>> elementsMap = new HashMap<Integer, Record<T>>();
+  HashMap<Integer, Record<T>> elementsMap = null;
   
   /**
    * It creates an empty priority queue.
