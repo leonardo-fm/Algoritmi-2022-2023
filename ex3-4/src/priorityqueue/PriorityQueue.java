@@ -75,7 +75,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @return: the first element, iff the queue is empty return null.
    */
   @Override
-  public T top(){
+  public T top() {
     if (!empty()) {
       return (this.array).get(0);
     }
@@ -86,7 +86,7 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * Remove the top element in the queue
    */
   @Override
-  public void pop(){
+  public void pop() {
     if (empty()) {
       return;
     }

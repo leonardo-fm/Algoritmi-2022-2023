@@ -37,7 +37,7 @@ public class PriorityQueueTests {
   }
   
   @Test
-  public void testIsEmptyZeroEl(){
+  public void testIsEmptyZeroEl() {
     assertTrue(priorityQueue.empty());
   }
   

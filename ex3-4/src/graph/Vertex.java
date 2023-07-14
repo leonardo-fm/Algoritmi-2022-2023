@@ -26,9 +26,8 @@ public class Vertex<V, L> {
 	 * @return true if the edge has been added, otherwise false
 	 */
 	public boolean addEdge(AbstractEdge<V, L> edgeToBeAdded) {
-		if (edgeToBeAdded == null || containsEdge(edgeToBeAdded.getEnd())) {
+		if (edgeToBeAdded == null || containsEdge(edgeToBeAdded.getEnd()))
 			return false;
-		}
 		
 		edges.put(edgeToBeAdded.getEnd().hashCode(), edgeToBeAdded);
 		return true;
@@ -41,9 +40,7 @@ public class Vertex<V, L> {
 	 * otherwise false also if the endVertex is null
 	 */
 	public boolean containsEdge(V endVertex) {
-		if (endVertex == null) {
-			return false;
-		}
+		if (endVertex == null) return false;
 		
 		return edges.containsKey(endVertex.hashCode());
 	}
@@ -54,9 +51,7 @@ public class Vertex<V, L> {
 	 * @return
 	 */
 	public boolean removeEdge(V b) {
-		if (b == null) {
-			return false;
-		}
+		if (b == null) return false;
 		
 		AbstractEdge<V, L> removedEdge = edges.remove(b.hashCode());
 		return removedEdge != null;
@@ -84,9 +79,7 @@ public class Vertex<V, L> {
 	 * @return AbstractEdge<V, L>
 	 */
 	public AbstractEdge<V, L> getEdge(V b) {
-		if (b == null) {
-			return null;
-		}
+		if (b == null) return null;
 		
 		return edges.get(b.hashCode());
 	}
