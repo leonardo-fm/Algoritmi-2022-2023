@@ -54,7 +54,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 */
 	@Override
 	public boolean addEdge(V a, V b, L l) {
-		if (a == null || b == null || (labelled && l == null) || containsEdge(a, b))
+		if (a == null || b == null || containsEdge(a, b)
+				|| (labelled && l == null) || (!labelled && l != null))
 			return false;
 		
 		Vertex<V, L> currentVertexA = graph.get(a.hashCode());
@@ -205,9 +206,13 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	@Override
 	public Collection<V> getNeighbours(V a) {
 		Collection<V> result = new ArrayList<>();
-		Collection<AbstractEdge<V, L>> edges = graph.get(a.hashCode()).getEdges();
-		for (AbstractEdge<V, L> edge : edges) {
-			result.add(edge.getEnd());
+		if (a != null) {
+			Vertex<V, L> currentVertex = graph.get(a.hashCode());
+			if (currentVertex == null) return result;
+			Collection<AbstractEdge<V, L>> edges = currentVertex.getEdges();
+			for (AbstractEdge<V, L> edge : edges) {
+				result.add(edge.getEnd());
+			}			
 		}
 		
 		return result;
