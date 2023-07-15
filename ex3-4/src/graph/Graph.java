@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class Graph<V, L> implements AbstractGraph<V, L> {
-	private HashMap<Integer, Vertex<V, L>> graph = null; 
 	private boolean directed = false;
 	private boolean labelled = false;
+	private HashMap<Integer, Vertex<V, L>> vertexes = null; 
 	
 	public Graph(boolean directed, boolean labelled) {
 		this.directed = directed; 
 		this.labelled = labelled;
-		this.graph = new HashMap<Integer, Vertex<V, L>>();
+		this.vertexes = new HashMap<Integer, Vertex<V, L>>();
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public boolean addNode(V a) {
 		if (a == null || containsNode(a)) return false;
 		
-		graph.put(a.hashCode(), new Vertex<V, L>(a));
+		vertexes.put(a.hashCode(), new Vertex<V, L>(a));
 		return true;
 	}
 	
@@ -58,15 +58,15 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 				|| (labelled && l == null) || (!labelled && l != null))
 			return false;
 		
-		Vertex<V, L> currentVertexA = graph.get(a.hashCode());
+		Vertex<V, L> currentVertexA = vertexes.get(a.hashCode());
 		if (currentVertexA == null) return false;
-		AbstractEdge<V, L> newEdge = new Edge<V, L>(currentVertexA.getItem(), b, l);
+		AbstractEdge<V, L> newEdge = new Edge<V, L>(currentVertexA.getValue(), b, l);
 		currentVertexA.addEdge(newEdge);
 		
 		if (!isDirected()) {
-			Vertex<V, L> currentVertexB = graph.get(b.hashCode());
+			Vertex<V, L> currentVertexB = vertexes.get(b.hashCode());
 			if (currentVertexB == null) return false;
-			AbstractEdge<V, L> newEdgeB = new Edge<V, L>(currentVertexB.getItem(), a, l);
+			AbstractEdge<V, L> newEdgeB = new Edge<V, L>(currentVertexB.getValue(), a, l);
 			currentVertexB.addEdge(newEdgeB);
 		}
 		
@@ -82,7 +82,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public boolean containsNode(V a) {
 		if (a == null) return false;
 		
-		return graph.containsKey(a.hashCode());
+		return vertexes.containsKey(a.hashCode());
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public boolean containsEdge(V a, V b) {
 		if (a == null || b == null) return false;
 		
-		Vertex<V, L> currentVertex = graph.get(a.hashCode());
+		Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
 		if (currentVertex == null) return false;
 		
 		return currentVertex.containsEdge(b);
@@ -110,16 +110,16 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public boolean removeNode(V a) {
 		if (a == null) return false;
 		
-		for (Entry<Integer, Vertex<V, L>> vertex : graph.entrySet()) {
+		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
 			Vertex<V, L> currentVertex = vertex.getValue();
-			if (currentVertex.getItem().equals(a)) {
+			if (currentVertex.getValue().equals(a)) {
 				currentVertex.removeAllEdges();
 			} else {
 				currentVertex.removeEdge(a);				
 			}
 		}
 		
-		return graph.remove(a.hashCode()) != null;
+		return vertexes.remove(a.hashCode()) != null;
 	}
 
 	/**
@@ -134,12 +134,12 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 		
 		boolean response = true;
 		
-		Vertex<V, L> vertexA = graph.get(a.hashCode());
+		Vertex<V, L> vertexA = vertexes.get(a.hashCode());
 		if (vertexA == null) return false;
 		response = vertexA.removeEdge(b);
 		
 		if (!isDirected()) {
-			Vertex<V, L> vertexB = graph.get(b.hashCode());
+			Vertex<V, L> vertexB = vertexes.get(b.hashCode());
 			if (vertexB == null) return false;
 			response = vertexB.removeEdge(a);
 		}
@@ -153,7 +153,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 */
 	@Override
 	public int numNodes() {
-		return graph.size();
+		return vertexes.size();
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	@Override
 	public int numEdges() {
 		int totalNumberOfEdges = 0;
-		for (Entry<Integer, Vertex<V, L>> vertex : graph.entrySet()) {
+		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
 			totalNumberOfEdges += vertex.getValue().edgesSize();
 		}
 		
@@ -177,8 +177,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	@Override
 	public Collection<V> getNodes() {
 		Collection<V> result = new ArrayList<>();
-		for (Entry<Integer, Vertex<V, L>> vertex : graph.entrySet()) {
-			result.add(vertex.getValue().getItem());
+		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
+			result.add(vertex.getValue().getValue());
 		}
 		
 		return result;
@@ -191,7 +191,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	@Override
 	public Collection<? extends AbstractEdge<V,L>> getEdges() {
 		Collection<AbstractEdge<V,L>> result = new ArrayList<>();
-		for (Entry<Integer, Vertex<V, L>> vertex : graph.entrySet()) {
+		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
 			result.addAll(vertex.getValue().getEdges());
 		}
 		
@@ -207,7 +207,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public Collection<V> getNeighbours(V a) {
 		Collection<V> result = new ArrayList<>();
 		if (a != null) {
-			Vertex<V, L> currentVertex = graph.get(a.hashCode());
+			Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
 			if (currentVertex == null) return result;
 			Collection<AbstractEdge<V, L>> edges = currentVertex.getEdges();
 			for (AbstractEdge<V, L> edge : edges) {
@@ -228,12 +228,23 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public L getLabel(V a, V b) {
 		if (!isLabelled()) return null;
 		
-		Vertex<V, L> currentVertex = graph.get(a.hashCode());
+		Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
 		if (currentVertex == null) return null;
 		
 		AbstractEdge<V, L> currentEdge = currentVertex.getEdge(b);
 		if (currentEdge == null) return null;
 		
 		return currentEdge.getLabel();
+	}
+	
+	/**
+	 * Return the vertex if exist given the value
+	 * @param a
+	 * @return the vertex Vertex<V, L>
+	 */
+	public Vertex<V, L> getVertexByValue(V a) {
+		if (a == null) return null;
+		
+		return vertexes.get(a.hashCode());
 	}
 }
