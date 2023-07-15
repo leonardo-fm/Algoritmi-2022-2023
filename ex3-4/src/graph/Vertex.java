@@ -4,21 +4,21 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class Vertex<V, L> {
-	private V value = null;
+	private V item = null;
 	private boolean isVisited = false;
 	private HashMap<Integer, AbstractEdge<V, L>> edges = null;
 	
-	public Vertex(V value) {
-		this.value = value;
+	public Vertex(V item) {
+		this.item = item;
 		this.edges = new HashMap<Integer, AbstractEdge<V, L>>();
 	}
 	
 	/**
-	 * Get the value
-	 * @return the value V
+	 * Get the item
+	 * @return the item V
 	 */
-	public V getValue() {
-		return this.value;
+	public V getItem() {
+		return this.item;
 	}
 	
 	/**

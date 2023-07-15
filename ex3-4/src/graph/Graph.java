@@ -1,7 +1,7 @@
 package graph;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -41,7 +41,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	public boolean addNode(V a) {
 		if (a == null || containsNode(a)) return false;
 		
-		vertexes.put(a.hashCode(), new Vertex<V, L>(a));
+		vertexes.put(a.hashCode(), new Vertex<>(a));
 		return true;
 	}
 	
@@ -60,13 +60,13 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 		
 		Vertex<V, L> currentVertexA = vertexes.get(a.hashCode());
 		if (currentVertexA == null) return false;
-		AbstractEdge<V, L> newEdge = new Edge<V, L>(currentVertexA.getValue(), b, l);
+		AbstractEdge<V, L> newEdge = new Edge<>(currentVertexA.getItem(), b, l);
 		currentVertexA.addEdge(newEdge);
 		
 		if (!isDirected()) {
 			Vertex<V, L> currentVertexB = vertexes.get(b.hashCode());
 			if (currentVertexB == null) return false;
-			AbstractEdge<V, L> newEdgeB = new Edge<V, L>(currentVertexB.getValue(), a, l);
+			AbstractEdge<V, L> newEdgeB = new Edge<>(currentVertexB.getItem(), a, l);
 			currentVertexB.addEdge(newEdgeB);
 		}
 		
@@ -112,7 +112,7 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 		
 		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
 			Vertex<V, L> currentVertex = vertex.getValue();
-			if (currentVertex.getValue().equals(a)) {
+			if (currentVertex.getItem().equals(a)) {
 				currentVertex.removeAllEdges();
 			} else {
 				currentVertex.removeEdge(a);				
@@ -176,9 +176,9 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 */
 	@Override
 	public Collection<V> getNodes() {
-		Collection<V> result = new ArrayList<>();
+		Collection<V> result = new ArrayList<V>();
 		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
-			result.add(vertex.getValue().getValue());
+			result.add(vertex.getValue().getItem());
 		}
 		
 		return result;

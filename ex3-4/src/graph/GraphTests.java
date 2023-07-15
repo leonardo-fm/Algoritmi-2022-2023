@@ -27,15 +27,15 @@ public class GraphTests {
 	private Vertex<String, Integer> v3;
 	
 	@Before
-	public void createPriorityQueue() throws GraphException {
+	public void createPriorityQueue() {
 		graphDL = new Graph<String, Integer>(true, true);
 		graphD = new Graph<String, Integer>(true, false);
 		graphL = new Graph<String, Integer>(false, true);
 		graph = new Graph<String, Integer>(false, false);
 
-		v1 = new Vertex<>("Vertex 1", 0);
-		v2 = new Vertex<>("Vertex 2", 1);
-		v3 = new Vertex<>("Vertex 3", 2);
+		v1 = new Vertex<>("Vertex 1");
+		v2 = new Vertex<>("Vertex 2");
+		v3 = new Vertex<>("Vertex 3");
 	}
 	
 	// ----------- direct tests -----------
@@ -51,18 +51,18 @@ public class GraphTests {
 	
 	@Test
 	public void testIsDirectEdges() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(1, graphD.numEdges());
 	}
 	
 	@Test
 	public void testIsNotDirectEdges() {
 		graph = new Graph<String, Integer>(false, false);
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(2, graph.numEdges());
 	}
 	
@@ -80,213 +80,213 @@ public class GraphTests {
 	// ----------- add vertex tests -----------
 	@Test
 	public void testAddOneVertex() {
-		graph.addNode(v1.getValue());
+		graph.addNode(v1.getItem());
 		assertEquals(1, graph.numNodes());
 	}
 	
 	@Test
 	public void testAddTwoVertexes() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
 		assertEquals(2, graph.numNodes());
 	}
 	
 	@Test
 	public void testAddTwoEqVertexes() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v1.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v1.getItem());
 		assertEquals(1, graph.numNodes());
 	}
 	
 	// ----------- add edge tests -----------
 	@Test
 	public void testAddOneEdge() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(2, graph.numEdges());
 	}
 	
 	@Test
 	public void testAddTwoEdges() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v2.getValue(), v3.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v2.getItem(), v3.getItem(), null);
 		assertEquals(4, graph.numEdges());
 	}
 	
 	@Test
 	public void testAddTwoEqEdges() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(2, graph.numEdges());
 	}
 	
 	@Test
 	public void testAddOneEdgeWithLabel() {
-		graphL.addNode(v1.getValue());
-		graphL.addNode(v2.getValue());
-		graphL.addEdge(v1.getValue(), v2.getValue(), 8);
+		graphL.addNode(v1.getItem());
+		graphL.addNode(v2.getItem());
+		graphL.addEdge(v1.getItem(), v2.getItem(), 8);
 		assertEquals(2, graphL.numEdges());
 	}
 	
 	@Test
 	public void testAddOneEdgeDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(1, graphD.numEdges());
 	}
 	
 	@Test
 	public void testAddTwoEdgesDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addNode(v3.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
-		graphD.addEdge(v2.getValue(), v3.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addNode(v3.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
+		graphD.addEdge(v2.getItem(), v3.getItem(), null);
 		assertEquals(2, graphD.numEdges());
 	}
 	
 	@Test
 	public void testAddTwoEqEdgesDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(1, graphD.numEdges());
 	}
 	
 	@Test
 	public void testAddOneEdgeWithLabelDirect() {
-		graphDL.addNode(v1.getValue());
-		graphDL.addNode(v2.getValue());
-		graphDL.addEdge(v1.getValue(), v2.getValue(), 8);
+		graphDL.addNode(v1.getItem());
+		graphDL.addNode(v2.getItem());
+		graphDL.addEdge(v1.getItem(), v2.getItem(), 8);
 		assertEquals(1, graphDL.numEdges());
 	}
 	
 	// ----------- contain vertex tests -----------
 	@Test
 	public void testAddCheckVertex() {
-		graph.addNode(v1.getValue());
-		assertTrue(graph.containsNode(v1.getValue()));
+		graph.addNode(v1.getItem());
+		assertTrue(graph.containsNode(v1.getItem()));
 	}
 	
 	@Test
 	public void testAddTwoCheckVertexes() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		assertTrue(graph.containsNode(v2.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		assertTrue(graph.containsNode(v2.getItem()));
 	}
 	
 	@Test
 	public void testAddCheckNoVertex() {
-		assertFalse(graph.containsNode(v1.getValue()));
+		assertFalse(graph.containsNode(v1.getItem()));
 	}
 	
 	// ----------- contain edge tests -----------
 	@Test
 	public void testAddCheckEdge() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		assertTrue(graph.containsEdge(v1.getValue(), v2.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		assertTrue(graph.containsEdge(v1.getItem(), v2.getItem()));
 	}
 	
 	@Test
 	public void testAddTwoCheckEdges() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v3.getValue(), null);
-		assertTrue(graph.containsEdge(v1.getValue(), v3.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v3.getItem(), null);
+		assertTrue(graph.containsEdge(v1.getItem(), v3.getItem()));
 	}
 	
 	@Test
 	public void testAddCheckNoEdge() {
-		assertFalse(graph.containsEdge(v1.getValue(), v2.getValue()));	
+		assertFalse(graph.containsEdge(v1.getItem(), v2.getItem()));	
 	}
 	
 	@Test
 	public void testAddCheckEdgeOtherDirection() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		assertTrue(graph.containsEdge(v2.getValue(), v1.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		assertTrue(graph.containsEdge(v2.getItem(), v1.getItem()));
 	}
 	
 	@Test
 	public void testDeleteCheckEdgeOtherDirection() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.removeEdge(v1.getValue(), v2.getValue());
-		assertFalse(graph.containsEdge(v2.getValue(), v1.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.removeEdge(v1.getItem(), v2.getItem());
+		assertFalse(graph.containsEdge(v2.getItem(), v1.getItem()));
 	}
 	
 	// ----------- remove vertex tests -----------
 	@Test
 	public void testRemoveVertex() {
-		graph.addNode(v1.getValue());
-		assertTrue(graph.removeNode(v1.getValue()));
+		graph.addNode(v1.getItem());
+		assertTrue(graph.removeNode(v1.getItem()));
 	}
 	
 	@Test
 	public void testRemoveNoVertex() {
-		assertFalse(graph.removeNode(v1.getValue()));
+		assertFalse(graph.removeNode(v1.getItem()));
 	}
 	
 	@Test
 	public void testRemoveAllVertexes() {
 		boolean response = true;
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		response = response && graph.removeNode(v1.getValue());
-		response = response && graph.removeNode(v2.getValue());
-		response = response && graph.removeNode(v3.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		response = response && graph.removeNode(v1.getItem());
+		response = response && graph.removeNode(v2.getItem());
+		response = response && graph.removeNode(v3.getItem());
 		assertTrue(response);
 	}
 	
 	// ----------- remove edge tests -----------
 	@Test
 	public void testRemoveEdge() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		assertTrue(graph.removeEdge(v1.getValue(), v2.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		assertTrue(graph.removeEdge(v1.getItem(), v2.getItem()));
 	}
 	
 	@Test
 	public void testRemoveOtherEdge() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		assertTrue(graph.removeEdge(v2.getValue(), v1.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		assertTrue(graph.removeEdge(v2.getItem(), v1.getItem()));
 	}
 	
 	@Test
 	public void testRemoveNoEdge() {
-		assertFalse(graph.removeEdge(v1.getValue(), v2.getValue()));
+		assertFalse(graph.removeEdge(v1.getItem(), v2.getItem()));
 	}
 	
 	@Test
 	public void testRemoveAllEdge() {
 		boolean response = true;
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v3.getValue(), null);
-		graph.addEdge(v2.getValue(), v3.getValue(), null);
-		response = response && graph.removeEdge(v1.getValue(), v2.getValue());
-		response = response && graph.removeEdge(v1.getValue(), v3.getValue());
-		response = response && graph.removeEdge(v2.getValue(), v3.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v3.getItem(), null);
+		graph.addEdge(v2.getItem(), v3.getItem(), null);
+		response = response && graph.removeEdge(v1.getItem(), v2.getItem());
+		response = response && graph.removeEdge(v1.getItem(), v3.getItem());
+		response = response && graph.removeEdge(v2.getItem(), v3.getItem());
 		assertTrue(response);
 	}
 	
@@ -298,21 +298,21 @@ public class GraphTests {
 	
 	@Test
 	public void testOneVertex() {
-		graph.addNode(v1.getValue());
+		graph.addNode(v1.getItem());
 		assertEquals(1, graph.numNodes());
 	}
 	
 	@Test
 	public void testTwoVertex() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
 		assertEquals(2, graph.numNodes());
 	}
 	
 	@Test
 	public void testTwoEqVertex() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v1.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v1.getItem());
 		assertEquals(1, graph.numNodes());
 	}
 	
@@ -324,55 +324,55 @@ public class GraphTests {
 	
 	@Test
 	public void testOneEdge() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(2, graph.numEdges());
 	}
 	
 	@Test
 	public void testTwoEdges() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v3.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v3.getItem(), null);
 		assertEquals(4, graph.numEdges());
 	}
 	
 	@Test
 	public void testTwoEqEdges() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(2, graph.numEdges());
 	}
 	
 	@Test
 	public void testOneEdgeDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(1, graphD.numEdges());
 	}
 	
 	@Test
 	public void testTwoEdgesDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addNode(v3.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
-		graphD.addEdge(v1.getValue(), v3.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addNode(v3.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
+		graphD.addEdge(v1.getItem(), v3.getItem(), null);
 		assertEquals(2, graphD.numEdges());
 	}
 	
 	@Test
 	public void testTwoEqEdgesDirect() {
-		graphD.addNode(v1.getValue());
-		graphD.addNode(v2.getValue());
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
-		graphD.addEdge(v1.getValue(), v2.getValue(), null);
+		graphD.addNode(v1.getItem());
+		graphD.addNode(v2.getItem());
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
+		graphD.addEdge(v1.getItem(), v2.getItem(), null);
 		assertEquals(1, graphD.numEdges());
 	}
 	
@@ -385,27 +385,27 @@ public class GraphTests {
 	
 	@Test
 	public void testOneGetVertex() {
-		String[] expected = { v1.getValue() };
-		graph.addNode(v1.getValue());
+		String[] expected = { v1.getItem() };
+		graph.addNode(v1.getItem());
 		assertArrayEquals(expected, graph.getNodes().toArray());
 	}
 
 	@Test
 	public void testThreeGetVertex() {
-		String[] expected = { v1.getValue(), v3.getValue(), v2.getValue() };
-		graph.addNode(v1.getValue());
-		graph.addNode(v3.getValue());
-		graph.addNode(v2.getValue());
+		String[] expected = { v1.getItem(), v3.getItem(), v2.getItem() };
+		graph.addNode(v1.getItem());
+		graph.addNode(v3.getItem());
+		graph.addNode(v2.getItem());
 		assertArrayEquals(expected, graph.getNodes().toArray());
 	}
 	
 	@Test
 	public void testTwoGetVertex() {
-		String[] expected = { v3.getValue(), v2.getValue() };
-		graph.addNode(v1.getValue());
-		graph.addNode(v3.getValue());
-		graph.addNode(v2.getValue());
-		graph.removeNode(v1.getValue());
+		String[] expected = { v3.getItem(), v2.getItem() };
+		graph.addNode(v1.getItem());
+		graph.addNode(v3.getItem());
+		graph.addNode(v2.getItem());
+		graph.removeNode(v1.getItem());
 		assertArrayEquals(expected, graph.getNodes().toArray());
 	}
 	
@@ -419,12 +419,12 @@ public class GraphTests {
 	@Test
 	public void testOneGetEdge() {
 		ArrayList<Edge<String, Integer>> expected = new ArrayList<Edge<String,Integer>>();
-		expected.add(new Edge<String, Integer>(v1.getValue(), v2.getValue(), null));
-		expected.add(new Edge<String, Integer>(v2.getValue(), v1.getValue(), null));
+		expected.add(new Edge<String, Integer>(v1.getItem(), v2.getItem(), null));
+		expected.add(new Edge<String, Integer>(v2.getItem(), v1.getItem(), null));
 		
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
 
 		ArrayList<Edge<String, Integer>> response = (ArrayList<Edge<String, Integer>>) graph.getEdges();
 		for (int i = 0; i < expected.size(); i++) {
@@ -437,16 +437,16 @@ public class GraphTests {
 	@Test
 	public void testTwoGetEdges() {
 		ArrayList<Edge<String, Integer>> expected = new ArrayList<Edge<String,Integer>>();
-		expected.add(new Edge<String, Integer>(v1.getValue(), v2.getValue(), null));
-		expected.add(new Edge<String, Integer>(v3.getValue(), v2.getValue(), null));
-		expected.add(new Edge<String, Integer>(v2.getValue(), v1.getValue(), null));
-		expected.add(new Edge<String, Integer>(v2.getValue(), v3.getValue(), null));
+		expected.add(new Edge<String, Integer>(v1.getItem(), v2.getItem(), null));
+		expected.add(new Edge<String, Integer>(v3.getItem(), v2.getItem(), null));
+		expected.add(new Edge<String, Integer>(v2.getItem(), v1.getItem(), null));
+		expected.add(new Edge<String, Integer>(v2.getItem(), v3.getItem(), null));
 		
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v2.getValue(), v3.getValue(), null);
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v2.getItem(), v3.getItem(), null);
 
 		ArrayList<Edge<String, Integer>> response = (ArrayList<Edge<String, Integer>>) graph.getEdges();
 		for (int i = 0; i < expected.size(); i++) {
@@ -459,15 +459,15 @@ public class GraphTests {
 	@Test
 	public void testOneGetEdgesDeletionEdge() {
 		ArrayList<Edge<String, Integer>> expected = new ArrayList<Edge<String,Integer>>();
-		expected.add(new Edge<String, Integer>(v1.getValue(), v2.getValue(), null));
-		expected.add(new Edge<String, Integer>(v2.getValue(), v1.getValue(), null));
+		expected.add(new Edge<String, Integer>(v1.getItem(), v2.getItem(), null));
+		expected.add(new Edge<String, Integer>(v2.getItem(), v1.getItem(), null));
 		
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v2.getValue(), v3.getValue(), null);
-		graph.removeEdge(v2.getValue(), v3.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v2.getItem(), v3.getItem(), null);
+		graph.removeEdge(v2.getItem(), v3.getItem());
 		
 		ArrayList<Edge<String, Integer>> response = (ArrayList<Edge<String, Integer>>) graph.getEdges();
 		for (int i = 0; i < expected.size(); i++) {
@@ -480,15 +480,15 @@ public class GraphTests {
 	@Test
 	public void testOneGetEdgesDeletionVertex() {
 		ArrayList<Edge<String, Integer>> expected = new ArrayList<Edge<String,Integer>>();
-		expected.add(new Edge<String, Integer>(v1.getValue(), v2.getValue(), null));
-		expected.add(new Edge<String, Integer>(v2.getValue(), v1.getValue(), null));
+		expected.add(new Edge<String, Integer>(v1.getItem(), v2.getItem(), null));
+		expected.add(new Edge<String, Integer>(v2.getItem(), v1.getItem(), null));
 		
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addNode(v3.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v2.getValue(), v3.getValue(), null);
-		graph.removeNode(v3.getValue());
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addNode(v3.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v2.getItem(), v3.getItem(), null);
+		graph.removeNode(v3.getItem());
 
 		ArrayList<Edge<String, Integer>> response = (ArrayList<Edge<String, Integer>>) graph.getEdges();
 		for (int i = 0; i < expected.size(); i++) {
@@ -502,99 +502,99 @@ public class GraphTests {
 	@Test
 	public void testEmptyGraphGetNeighboursVertex() {
 		String[] expected = {};
-		assertArrayEquals(expected, graph.getNeighbours(v1.getValue()).toArray());
+		assertArrayEquals(expected, graph.getNeighbours(v1.getItem()).toArray());
 	}
 	
 	@Test
 	public void testOneGetNeighboursVertex() {
 		String[] expected = {};
-		graph.addNode(v1.getValue());
-		assertArrayEquals(expected, graph.getNeighbours(v1.getValue()).toArray());
+		graph.addNode(v1.getItem());
+		assertArrayEquals(expected, graph.getNeighbours(v1.getItem()).toArray());
 	}
 
 	@Test
 	public void testThreeGetNeighboursVertex() {
-		String[] expected = { v3.getValue(), v2.getValue() };
-		graph.addNode(v1.getValue());
-		graph.addNode(v3.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v3.getValue(), null);
-		assertArrayEquals(expected, graph.getNeighbours(v1.getValue()).toArray());
+		String[] expected = { v3.getItem(), v2.getItem() };
+		graph.addNode(v1.getItem());
+		graph.addNode(v3.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v3.getItem(), null);
+		assertArrayEquals(expected, graph.getNeighbours(v1.getItem()).toArray());
 	}
 	
 	@Test
 	public void testTwoGetNeighboursVertex() {
-		String[] expected = { v3.getValue() };
-		graph.addNode(v1.getValue());
-		graph.addNode(v3.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		graph.addEdge(v1.getValue(), v3.getValue(), null);
-		graph.removeNode(v2.getValue());
-		assertArrayEquals(expected, graph.getNeighbours(v1.getValue()).toArray());
+		String[] expected = { v3.getItem() };
+		graph.addNode(v1.getItem());
+		graph.addNode(v3.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		graph.addEdge(v1.getItem(), v3.getItem(), null);
+		graph.removeNode(v2.getItem());
+		assertArrayEquals(expected, graph.getNeighbours(v1.getItem()).toArray());
 	}
 	
 	// ----------- add edge label -----------
 	@Test
 	public void testNoIsLabelledInsert() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		assertTrue(graph.addEdge(v1.getValue(), v2.getValue(), null));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		assertTrue(graph.addEdge(v1.getItem(), v2.getItem(), null));
 	}
 	
 	@Test
 	public void testNoIsLabelledInsertValue() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		assertFalse(graph.addEdge(v1.getValue(), v2.getValue(), 8));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		assertFalse(graph.addEdge(v1.getItem(), v2.getItem(), 8));
 	}
 	
 	@Test
 	public void testIsLabelledInsert() {
-		graphL.addNode(v1.getValue());
-		graphL.addNode(v2.getValue());
-		assertFalse(graphL.addEdge(v1.getValue(), v2.getValue(), null));
+		graphL.addNode(v1.getItem());
+		graphL.addNode(v2.getItem());
+		assertFalse(graphL.addEdge(v1.getItem(), v2.getItem(), null));
 	}
 		
 	@Test
 	public void testIsLabelledInsertValue() {
-		graphL.addNode(v1.getValue());
-		graphL.addNode(v2.getValue());
-		assertTrue(graphL.addEdge(v1.getValue(), v2.getValue(), 8));
+		graphL.addNode(v1.getItem());
+		graphL.addNode(v2.getItem());
+		assertTrue(graphL.addEdge(v1.getItem(), v2.getItem(), 8));
 	}
 	
 	@Test
 	public void testNoDirection() {
 		Integer expected = 8;
-		graphL.addNode(v1.getValue());
-		graphL.addNode(v2.getValue());
-		graphL.addEdge(v1.getValue(), v2.getValue(), 8);
-		assertEquals(expected, graphL.getLabel(v1.getValue(), v2.getValue()));
+		graphL.addNode(v1.getItem());
+		graphL.addNode(v2.getItem());
+		graphL.addEdge(v1.getItem(), v2.getItem(), 8);
+		assertEquals(expected, graphL.getLabel(v1.getItem(), v2.getItem()));
 	}
 	
 	@Test
 	public void testNoLabelledNoDirection() {
-		graph.addNode(v1.getValue());
-		graph.addNode(v2.getValue());
-		graph.addEdge(v1.getValue(), v2.getValue(), null);
-		assertEquals(null, graphL.getLabel(v1.getValue(), v2.getValue()));
+		graph.addNode(v1.getItem());
+		graph.addNode(v2.getItem());
+		graph.addEdge(v1.getItem(), v2.getItem(), null);
+		assertEquals(null, graphL.getLabel(v1.getItem(), v2.getItem()));
 	}
 	
 	@Test
 	public void testNoEdge() {
-		assertEquals(null, graphL.getLabel(v1.getValue(), v2.getValue()));
+		assertEquals(null, graphL.getLabel(v1.getItem(), v2.getItem()));
 	}
 	
-	// ----------- get index tests -----------
+	// ----------- get isVisited tests -----------
 	@Test
-	public void testGetIndexFromVertexNotInTheGraph() {
-		assertEquals(-1, graph.indexOf(v1.getValue()));
+	public void testIsVisited() {
+		assertFalse(v1.getIsVisisted());
 	}
 	
 	@Test
-	public void testGetIndex() {
-		graph.addNode(v1.getValue());
-		assertEquals(0, graph.indexOf(v1.getValue()));
+	public void testIsVisitedTrue() {
+		v1.setIsVisited(true);
+		assertTrue(v1.getIsVisisted());
 	}
 }

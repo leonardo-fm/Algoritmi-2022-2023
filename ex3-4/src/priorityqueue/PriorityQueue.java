@@ -20,11 +20,9 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * It accepts as input a comparator implementing the 
    * precedence relation between the queue elements. 
    * @param comparator: a comparator implementing the precedence relation between the queue elements.
-   * @throws PriorityQueueException if the parameter is null.
    */
-  public PriorityQueue(Comparator<? super T> comparator) throws PriorityQueueException {
-    if (comparator == null) throw new PriorityQueueException("PriorityQueue constructor: comparator parameter cannot be null");
-    this.array = new ArrayList<T>(); 
+  public PriorityQueue(Comparator<? super T> comparator) {
+    this.array = new ArrayList<T>();
     this.comparator = comparator;
     this.elementsMap = new HashMap<Integer, Record<T>>();
   }
