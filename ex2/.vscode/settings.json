@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "skip_list.h": "c"
+        "skip_list.h": "c",
+        "cstdlib": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

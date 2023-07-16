@@ -98,7 +98,7 @@ const void* search_skiplist(struct SkipList *list, void *item) {
             currentNode = currentNode[i]->next;
         }
     }
-    
+
     if (currentNode[0] != NULL && list->compare(currentNode[0]->item, item) == 0) {
         return currentNode[0]->item;
     } else {

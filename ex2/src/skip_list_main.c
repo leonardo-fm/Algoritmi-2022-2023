@@ -60,7 +60,7 @@ void find_errors(FILE *dictfile, FILE *textfile, size_t max_height) {
     while (fgets(buffer, bufSize, textfile) != NULL) {
         char* token = strtok(buffer, delimiter);
         while (token != NULL) {
-            if (strlen(token) != 1) {
+            if (strlen(token) != 1) { // a single char is NOT a word
                 char *word = (char *)malloc((strlen(token) + 1) * sizeof(char));
                 memcpy(word, token, strlen(token) + 1);
                 to_lower_case(word);

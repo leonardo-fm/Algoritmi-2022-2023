@@ -79,7 +79,7 @@ void find_errors(FILE *dictfile, FILE *textfile, size_t max_height, char *fileOu
     end = clock();
     cpuTimeUsed = ((double) (end - start)) / CLOCKS_PER_SEC;
     data.loading_time = cpuTimeUsed;
-    data.total_items_loaded = j;
+    data.total_items_loaded = (size_t)j;
 
     char *delimiter = " .,:;!?";
     int totWords = 0;
