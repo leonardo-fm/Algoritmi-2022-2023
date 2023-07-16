@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import graph.AbstractEdge;
 import graph.Graph;
@@ -30,24 +31,37 @@ public class Prim {
   	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) {
 		PriorityQueue<AbstractEdge<V, L>> pq = new PriorityQueue<>(new EdgeDoubleComparator<>());
 		int edgesCount = 0;
-		int vertexCount = 1;
+		int vertexCount = 0;
 		double totalWeight = 0.0;
 		Collection<AbstractEdge<V, L>> response = new ArrayList<>(graph.numNodes() - 1);
 		if (graph.numNodes() == 0) return response;
 		graph.getNodes();
-		V firstNodeValue = graph.getNodes().iterator().next();
-		addEdgesToPriorityQueue(graph, graph.getVertexByValue(firstNodeValue), pq);
-		while (!pq.empty()) {
-			AbstractEdge<V, L> currentEdge = pq.top();
-			pq.pop();
-			
-  			if (graph.getVertexByValue(currentEdge.getEnd()).getIsVisisted()) continue;
-  			response.add(currentEdge);
-  			edgesCount++;
+		Iterator<V> nodeIterator = graph.getNodes().iterator();
+		addEdgesToPriorityQueue(graph, graph.getVertexByValue(nodeIterator.next()), pq);
+		while (vertexCount < graph.numNodes()) {
 			vertexCount++;
-  			totalWeight += Double.parseDouble(currentEdge.getLabel().toString());
-  			
-  			addEdgesToPriorityQueue(graph, graph.getVertexByValue(currentEdge.getEnd()), pq);
+			while (!pq.empty()) {
+				AbstractEdge<V, L> currentEdge = pq.top();
+				pq.pop();
+
+				if (graph.getVertexByValue(currentEdge.getEnd()).getIsVisisted()) continue;
+				response.add(currentEdge);
+				edgesCount++;
+				vertexCount++;
+				totalWeight += Double.parseDouble(currentEdge.getLabel().toString());
+
+				addEdgesToPriorityQueue(graph, graph.getVertexByValue(currentEdge.getEnd()), pq);
+			}
+
+			V nextNode = null;
+			boolean foundNextNode = false;
+			while (nodeIterator.hasNext() && !foundNextNode) {
+				nextNode = nodeIterator.next();
+				if (!graph.getVertexByValue(nextNode).getIsVisisted()) {
+					foundNextNode = true;
+				}
+			}
+			if (foundNextNode) addEdgesToPriorityQueue(graph, graph.getVertexByValue(nextNode), pq);
 		}
 
 		System.err.println("Total number of vertexes: " + vertexCount);
