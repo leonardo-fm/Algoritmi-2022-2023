@@ -14,37 +14,46 @@ import priorityqueue.PriorityQueue;
 import priorityqueue.PriorityQueueException;
 
 public class Prim {
-	public static void main(String[] args) throws IOException, PriorityQueueException {
+	public static void main(String[] args) throws IOException {
 		Graph<String, Double> graph = new Graph<>(false, true);
-		loadGraph(graph, args[1]);
+		System.out.println("Working Directory = " + System.getProperty("user.dir"));
+		System.out.println("THE DATA PHAT IS PROVIDED BY CODE NOT BU THE USER!");
+		loadGraph(graph, "./data/italian_dist_graph.csv");
+		//loadGraph(graph, args[1]);
 		Collection<? extends AbstractEdge<String, Double>> mst = minimumSpanningForest(graph);
-		// scrivi su standard output solo la descrizione della foresta calcolata come CSV con formato analogo a quello in input
-		// su standard error si possono scrivere ulteriori informazioni, come il numero di nodi e archi nella foresta calcolata,
-		// o il peso totale della foresta
+		/*
+		for (AbstractEdge<String, Double> edge : mst) {
+			System.out.println(edge.getStart() + "," + edge.getEnd() + "," + edge.getLabel());
+		}*/
 	}
   	  
   	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) {
-		PriorityQueue<AbstractEdge<V, L>> pq = new PriorityQueue<AbstractEdge<V, L>>(new EdgeDoubleComparator());
-		int numberOfEdges = graph.numNodes() - 1;
+		PriorityQueue<AbstractEdge<V, L>> pq = new PriorityQueue<>(new EdgeDoubleComparator<>());
 		int edgesCount = 0;
-		Double totalWeight = 0.0;
-		Collection<AbstractEdge<V, L>> response = new ArrayList<>(numberOfEdges);
+		int vertexCount = 1;
+		double totalWeight = 0.0;
+		Collection<AbstractEdge<V, L>> response = new ArrayList<>(graph.numNodes() - 1);
 		if (graph.numNodes() == 0) return response;
 		graph.getNodes();
 		V firstNodeValue = graph.getNodes().iterator().next();
 		addEdgesToPriorityQueue(graph, graph.getVertexByValue(firstNodeValue), pq);
-		while (!pq.empty() && edgesCount != numberOfEdges) {
+		while (!pq.empty()) {
 			AbstractEdge<V, L> currentEdge = pq.top();
 			pq.pop();
 			
   			if (graph.getVertexByValue(currentEdge.getEnd()).getIsVisisted()) continue;
   			response.add(currentEdge);
   			edgesCount++;
-  			totalWeight += (Double)currentEdge.getLabel();
+			vertexCount++;
+  			totalWeight += Double.parseDouble(currentEdge.getLabel().toString());
   			
   			addEdgesToPriorityQueue(graph, graph.getVertexByValue(currentEdge.getEnd()), pq);
 		}
-  		if (response.size() != numberOfEdges) return null;
+
+		System.err.println("Total number of vertexes: " + vertexCount);
+		System.err.println("Total number of edges: " + edgesCount);
+		System.err.println("Total weight of the mst: " + totalWeight / 1000);
+
 		return response;
   	}
   	
@@ -59,8 +68,8 @@ public class Prim {
 			    graph.addNode(lineElements[0]);
 			    graph.addNode(lineElements[1]);
 			    graph.addEdge(lineElements[0], lineElements[1], Double.parseDouble(lineElements[2]));
+				nOfItems++;
 			}
-			nOfItems++;
 		}
   	    
   	    System.out.println("Data loaded (" + nOfItems + ")");
