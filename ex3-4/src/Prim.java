@@ -17,15 +17,11 @@ import priorityqueue.PriorityQueueException;
 public class Prim {
 	public static void main(String[] args) throws IOException {
 		Graph<String, Double> graph = new Graph<>(false, true);
-		System.out.println("Working Directory = " + System.getProperty("user.dir"));
-		System.out.println("THE DATA PHAT IS PROVIDED BY CODE NOT BU THE USER!");
-		loadGraph(graph, "./data/italian_dist_graph.csv");
-		//loadGraph(graph, args[1]);
+		loadGraph(graph, args[0]);
 		Collection<? extends AbstractEdge<String, Double>> mst = minimumSpanningForest(graph);
-		/*
 		for (AbstractEdge<String, Double> edge : mst) {
 			System.out.println(edge.getStart() + "," + edge.getEnd() + "," + edge.getLabel());
-		}*/
+		}
 	}
   	  
   	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) {

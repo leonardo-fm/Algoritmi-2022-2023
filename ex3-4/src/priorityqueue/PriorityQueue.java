@@ -169,11 +169,13 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
       return;
     }
 
-    boolean eGreaterL =  (this.comparator).compare(e, (this.array).get(leftElementIndex)) > 0; 
-    boolean eGreaterR = (this.comparator).compare(e, (this.array).get(rightElementIndex)) > 0;
+    T eL = (this.array).get(leftElementIndex);
+    T eR = (this.array).get(rightElementIndex);
+    boolean eGreaterL =  (this.comparator).compare(e, eL) > 0;
+    boolean eGreaterR = (this.comparator).compare(e, eR) > 0;
     
     if (eGreaterL && eGreaterR) {
-      if ((this.comparator).compare((this.array).get(leftElementIndex), (this.array).get(rightElementIndex)) >= 0) {
+      if ((this.comparator).compare(eL, eR) < 0) {
         // L is greater or equal then R
         swap(eIndex, leftElementIndex);
         sink(e, leftElementIndex);
