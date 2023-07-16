@@ -49,6 +49,19 @@ static void test_binary_insertion_sort_array() {
     TEST_ASSERT_EQUAL_INT_ARRAY(expArray, array, nitems);
 }
 
+static void test_merge_and_binary_insertion_sort_array() {
+    merge_binary_insertion_sort(array, nitems, size, 2, compar_int);
+    int expArray[7] = {0, 0, 1, 2, 3, 4, 5};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expArray, array, nitems);
+}
+
+static void test_merge_and_binary_insertion_sort_array_all_equals() {
+    int testArray[6] = {8, 8, 8, 8, 8, 8};
+    merge_binary_insertion_sort(testArray, 6, size, 2, compar_int);
+    int expArray[6] = {8, 8, 8, 8, 8, 8};
+    TEST_ASSERT_EQUAL_INT_ARRAY(expArray, testArray, 6);
+}
+
 static void test_merge_sort_array_one_elent() {
     int singleArray[1] = {8}; 
     merge_binary_insertion_sort(singleArray, 1, size, 0, compar_int);
@@ -65,11 +78,12 @@ static void test_binary_insertion_sort_array_single_array() {
 
 int main(void) {
 
-  //test session
   UNITY_BEGIN();
   
   RUN_TEST(test_merge_sort_array);
   RUN_TEST(test_binary_insertion_sort_array);
+  RUN_TEST(test_merge_and_binary_insertion_sort_array);
+  RUN_TEST(test_merge_and_binary_insertion_sort_array_all_equals);
   RUN_TEST(test_merge_sort_array_one_elent);
   RUN_TEST(test_binary_insertion_sort_array_single_array);
   

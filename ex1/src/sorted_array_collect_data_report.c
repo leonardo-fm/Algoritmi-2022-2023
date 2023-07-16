@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-//#include <windows.h>
 #include "merge_binary_insertion_sort.h"
 
 struct Record {
@@ -34,12 +33,6 @@ static int compar_float(const void *val1, const void *val2);
 static int compar_string(const void *val1, const void *val2);
 
 int main(int argc, char *argv[]) {
-    //char path[MAX_PATH];
-    //GetCurrentDirectory(MAX_PATH, path);
-    //printf("Current directory: %s\n", path);
-
-    //char *dataSource = ".\\data\\records.csv";
-    //char *dataFinish = ".\\report\\report_tests.csv";
     if (argc != 3) {
         fprintf(stderr, "main: not correct ammount of arguments (2)");
         exit(EXIT_FAILURE);

@@ -28,7 +28,7 @@ static int compar_string(const void *val1, const void *val2);
 
 int main(int argc, char *argv[]) {
     if (argc != ARGUMENT_NUMBER) {
-        fprintf(stderr, "main: wrong ammount of arguments");
+        fprintf(stderr, "main: wrong ammount of arguments (%i)", argc);
         exit(EXIT_FAILURE);
     }
 
@@ -37,8 +37,10 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    printf("Extracting data...\n");
     struct ArrayInfo arrayInfo = extract_data(argv[1]);
 
+    printf("Sorting data...\n");
     switch (atoi(argv[3]))
     {
         case 1:
@@ -50,8 +52,12 @@ int main(int argc, char *argv[]) {
         case 3:
             merge_binary_insertion_sort(arrayInfo.base, arrayInfo.nitems, arrayInfo.size, (size_t)atoi(argv[4]), compar_float);
             break;
+        default:
+            fprintf(stderr, "main: wrong column index");
+            exit(EXIT_FAILURE);
     }
 
+    printf("Saving data...");
     save_data(arrayInfo, argv[2]);
 
     return 0;

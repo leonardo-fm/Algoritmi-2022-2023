@@ -13,7 +13,7 @@
 --PER ESEGUIRE ordered_array---
 1) Compilare
 2) posizionarsi in .../ex1/bin
-3) ./main_ex1 "./bin/main_ex1.exe ../ex1/Data/records.csv ../ex1/Data/output.csv 2 7"
+3) ./main_ex1.exe ../data/records.csv ../data/output.csv 2 7
 
 ---PER ESEGUIRE ordered_array_c_unit_test---
 1) Compilare
