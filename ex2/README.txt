@@ -10,7 +10,7 @@
 
 ***ESECUZIONE***
 
---PER ESEGUIRE ordered_array---
+--PER ESEGUIRE skip_list_main---
 1) Compilare
 2) posizionarsi in .../ex1/bin
 3) ./main_ex2 ../data/dictionary.txt ../data/correctme.txt 19
