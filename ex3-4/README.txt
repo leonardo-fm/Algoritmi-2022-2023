@@ -24,7 +24,7 @@
 
 ***ESECUZIONE***
 
----PER ESEGUIRE priorityqueue/PriorityQueueJavaTestsRunner---
+---PER ESEGUIRE priorityqueue/PriorityQueueJavaTestsRunners---
 1) posizionarsi in .../bin
 2) java -cp '.;../junit-4.12.jar;../hamcrest-core-1.3.jar'  priorityqueue/PriorityQueueJavaTestsRunner
 
@@ -36,4 +36,5 @@
 
 ---PER ESEGUIRE Prim---
 1) posizionarsi in .../bin
-2) java Prim "../data/italian_dist_graph.csv"
+2) java Prim ../data/italian_dist_graph.csv (true/false)*
+* Per mandare in console tutti gil archi degli alberi, default = false

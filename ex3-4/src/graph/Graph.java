@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 public class Graph<V, L> implements AbstractGraph<V, L> {
 	private boolean directed = false;
 	private boolean labelled = false;
-	private HashMap<Integer, Vertex<V, L>> vertexes = null; 
+	private HashMap<Integer, Node<V, L>> nodes = null;
 	
 	public Graph(boolean directed, boolean labelled) {
 		this.directed = directed; 
 		this.labelled = labelled;
-		this.vertexes = new HashMap<Integer, Vertex<V, L>>();
+		this.nodes = new HashMap<>();
 	}
 
 	/**
@@ -33,93 +33,102 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	}
 
 	/**
-	 * Add a new generic vertex
+	 * Add a new generic node
 	 * @param a
-	 * @return true if the vertex has been added, otherwise false
+	 * @return true if the node has been added, otherwise false
 	 */
 	@Override
-	public boolean addNode(V a) {
-		if (a == null || containsNode(a)) return false;
+	public boolean addNode(V a) throws GraphException {
+		if (a == null)
+			throw new GraphException("addNode: the value can't be null");
+		if (containsNode(a)) return false;
 		
-		vertexes.put(a.hashCode(), new Vertex<>(a));
+		nodes.put(a.hashCode(), new Node<>(a));
 		return true;
 	}
 	
 	/**
-	 * Add a new edge to a vertex
+	 * Add a new edge to a node
 	 * @param a
 	 * @param b
 	 * @param l
 	 * @return true if the edge has been added, otherwise false
 	 */
 	@Override
-	public boolean addEdge(V a, V b, L l) {
-		if (a == null || b == null || containsEdge(a, b)
-				|| (labelled && l == null) || (!labelled && l != null))
+	public boolean addEdge(V a, V b, L l) throws GraphException {
+		if (a == null || b == null)
+			throw new GraphException("addEdge: the values a and b can't be null");
+		if ((labelled && l == null) || (!labelled && l != null))
+			throw new GraphException("addEdge: the label value is against the direct initialization");
+
+		if (containsEdge(a, b))
 			return false;
 		
-		Vertex<V, L> currentVertexA = vertexes.get(a.hashCode());
-		if (currentVertexA == null) return false;
-		AbstractEdge<V, L> newEdge = new Edge<>(currentVertexA.getItem(), b, l);
-		currentVertexA.addEdge(newEdge);
+		Node<V, L> currentNodeA = nodes.get(a.hashCode());
+		if (currentNodeA == null) return false;
+		AbstractEdge<V, L> newEdge = new Edge<>(currentNodeA.getItem(), b, l);
+		currentNodeA.addEdge(newEdge);
 		
 		if (!isDirected()) {
-			Vertex<V, L> currentVertexB = vertexes.get(b.hashCode());
-			if (currentVertexB == null) return false;
-			AbstractEdge<V, L> newEdgeB = new Edge<>(currentVertexB.getItem(), a, l);
-			currentVertexB.addEdge(newEdgeB);
+			Node<V, L> currentNodeB = nodes.get(b.hashCode());
+			if (currentNodeB == null) return false;
+			AbstractEdge<V, L> newEdgeB = new Edge<>(currentNodeB.getItem(), a, l);
+			currentNodeB.addEdge(newEdgeB);
 		}
 		
 		return true;
 	}
 
 	/**
-	 * Check if the graph has a vertex a
+	 * Check if the graph has a node a
 	 * @param a
-	 * @return true if the vertex is already in, otherwise false
+	 * @return true if the node is already in, otherwise false
 	 */
 	@Override
-	public boolean containsNode(V a) {
-		if (a == null) return false;
-		
-		return vertexes.containsKey(a.hashCode());
+	public boolean containsNode(V a) throws GraphException {
+		if (a == null)
+			throw new GraphException("containsNode: the value can't be null");
+
+		return nodes.containsKey(a.hashCode());
 	}
 
 	/**
-	 * Check if the vertex has an edge a - b
+	 * Check if the node has an edge a - b
 	 * @param a
 	 * @param b
 	 * @return true if the edge is already in, otherwise false
 	 */
 	@Override
-	public boolean containsEdge(V a, V b) {
-		if (a == null || b == null) return false;
+	public boolean containsEdge(V a, V b) throws GraphException {
+		if (a == null || b == null)
+			throw new GraphException("containsEdge: the values a and b can't be null");
+
+		Node<V, L> currentNode = nodes.get(a.hashCode());
+		if (currentNode == null) return false;
 		
-		Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
-		if (currentVertex == null) return false;
-		
-		return currentVertex.containsEdge(b);
+		return currentNode.containsEdgeWith(b);
 	}
 
 	/**
-	 * Remove a vertex a and all the edges connected to it
+	 * Remove a node a and all the edges connected to it
 	 * @param a
 	 * @return true if success otherwise false
 	 */
 	@Override
-	public boolean removeNode(V a) {
-		if (a == null) return false;
-		
-		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
-			Vertex<V, L> currentVertex = vertex.getValue();
-			if (currentVertex.getItem().equals(a)) {
-				currentVertex.removeAllEdges();
+	public boolean removeNode(V a) throws GraphException {
+		if (a == null)
+			throw new GraphException("removeNode: the value can't be null");
+
+		for (Entry<Integer, Node<V, L>> node : nodes.entrySet()) {
+			Node<V, L> currentNode = node.getValue();
+			if (currentNode.getItem().equals(a)) {
+				currentNode.removeAllEdges();
 			} else {
-				currentVertex.removeEdge(a);				
+				currentNode.removeEdgeWith(a);
 			}
 		}
 		
-		return vertexes.remove(a.hashCode()) != null;
+		return nodes.remove(a.hashCode()) != null;
 	}
 
 	/**
@@ -129,92 +138,93 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if success otherwise false
 	 */
 	@Override
-	public boolean removeEdge(V a, V b) {
-		if (a == null || b == null) return false;
-		
+	public boolean removeEdge(V a, V b) throws GraphException {
+		if (a == null || b == null)
+			throw new GraphException("removeEdge: the values a and b can't be null");
+
 		boolean response = true;
 		
-		Vertex<V, L> vertexA = vertexes.get(a.hashCode());
-		if (vertexA == null) return false;
-		response = vertexA.removeEdge(b);
+		Node<V, L> nodeA = nodes.get(a.hashCode());
+		if (nodeA == null) return false;
+		response = nodeA.removeEdgeWith(b);
 		
 		if (!isDirected()) {
-			Vertex<V, L> vertexB = vertexes.get(b.hashCode());
-			if (vertexB == null) return false;
-			response = vertexB.removeEdge(a);
+			Node<V, L> nodeB = nodes.get(b.hashCode());
+			if (nodeB == null) return false;
+			response = nodeB.removeEdgeWith(a);
 		}
 		
 		return response;
 	}
 
 	/**
-	 * Return the amount of vertex in the graph
-	 * @return number of vertexes
+	 * Return the amount of node in the graph
+	 * @return number of nodes
 	 */
 	@Override
 	public int numNodes() {
-		return vertexes.size();
+		return nodes.size();
 	}
 
 	/**
-	 * Return the amount of edges in all the vertexes
+	 * Return the amount of edges in all the nodes
 	 * @return number of all edges
 	 */
 	@Override
 	public int numEdges() {
 		int totalNumberOfEdges = 0;
-		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
-			totalNumberOfEdges += vertex.getValue().edgesSize();
+		for (Entry<Integer, Node<V, L>> node : nodes.entrySet()) {
+			totalNumberOfEdges += node.getValue().edgesSize();
 		}
 		
 		return totalNumberOfEdges;
 	}
 
 	/**
-	 * Return the list of vertexes
-	 * @return collection of vertex
+	 * Return the list of nodes
+	 * @return collection of node
 	 */
 	@Override
 	public Collection<V> getNodes() {
 		Collection<V> result = new ArrayList<V>();
-		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
-			result.add(vertex.getValue().getItem());
+		for (Entry<Integer, Node<V, L>> node : nodes.entrySet()) {
+			result.add(node.getValue().getItem());
 		}
 		
 		return result;
 	}
 
 	/**
-	 * Return all edges of all vertexes
+	 * Return all edges of all nodes
 	 * @return a collection of AbstractEdge<V, L>
 	 */
 	@Override
 	public Collection<? extends AbstractEdge<V,L>> getEdges() {
 		Collection<AbstractEdge<V,L>> result = new ArrayList<>();
-		for (Entry<Integer, Vertex<V, L>> vertex : vertexes.entrySet()) {
-			result.addAll(vertex.getValue().getEdges());
+		for (Entry<Integer, Node<V, L>> node : nodes.entrySet()) {
+			result.addAll(node.getValue().getEdges());
 		}
 		
 		return result;
 	}
 	
 	/**
-	 * Return the list of adjacent vertexes
+	 * Return the list of adjacent nodes
 	 * @param a
-	 * @return a collection of adjacent vertexes 
+	 * @return a collection of adjacent nodes 
 	 */
 	@Override
-	public Collection<V> getNeighbours(V a) {
+	public Collection<V> getNeighbours(V a) throws GraphException {
+		if (a == null)
+			throw new GraphException("getNeighbours: the value can't be null");
+
 		Collection<V> result = new ArrayList<>();
-		if (a != null) {
-			Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
-			if (currentVertex == null) return result;
-			Collection<AbstractEdge<V, L>> edges = currentVertex.getEdges();
-			for (AbstractEdge<V, L> edge : edges) {
-				result.add(edge.getEnd());
-			}			
+		Node<V, L> currentNode = nodes.get(a.hashCode());
+		if (currentNode == null) return result;
+		Collection<AbstractEdge<V, L>> edges = currentNode.getEdges();
+		for (AbstractEdge<V, L> edge : edges) {
+			result.add(edge.getEnd());
 		}
-		
 		return result;
 	}
 
@@ -225,26 +235,30 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return the label L
 	 */
 	@Override
-	public L getLabel(V a, V b) {
+	public L getLabel(V a, V b) throws GraphException {
+		if (a == null || b == null)
+			throw new GraphException("getLabel: the values a and b can't be null");
+
 		if (!isLabelled()) return null;
 		
-		Vertex<V, L> currentVertex = vertexes.get(a.hashCode());
-		if (currentVertex == null) return null;
+		Node<V, L> currentNode = nodes.get(a.hashCode());
+		if (currentNode == null) return null;
 		
-		AbstractEdge<V, L> currentEdge = currentVertex.getEdge(b);
+		AbstractEdge<V, L> currentEdge = currentNode.getEdgeWith(b);
 		if (currentEdge == null) return null;
 		
 		return currentEdge.getLabel();
 	}
 	
 	/**
-	 * Return the vertex if exist given the value
+	 * Return the node if exist given the value
 	 * @param a
-	 * @return the vertex Vertex<V, L>
+	 * @return the node Node<V, L>
 	 */
-	public Vertex<V, L> getVertexByValue(V a) {
-		if (a == null) return null;
-		
-		return vertexes.get(a.hashCode());
+	public Node<V, L> getNodeByValue(V a) throws GraphException {
+		if (a == null)
+			throw new GraphException("getNodeByValue: the value can't be null");
+
+		return nodes.get(a.hashCode());
 	}
 }

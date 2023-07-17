@@ -8,11 +8,13 @@
       <change beforePath="$PROJECT_DIR$/../ex1/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/README.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../ex2/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/README.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Prim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prim.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/priorityqueue/AbstractQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/AbstractQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/priorityqueue/PriorityQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/PriorityQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/priorityqueue/PriorityQueueTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/PriorityQueueTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/priorityqueue/Record.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/Record.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/AbstractGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/AbstractGraph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/Edge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Edge.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/GraphTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/GraphTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Node.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +56,7 @@
       <updated>1689457353493</updated>
       <workItem from="1689457357406" duration="1480000" />
       <workItem from="1689495043497" duration="5648000" />
-      <workItem from="1689582043844" duration="3893000" />
+      <workItem from="1689582043844" duration="6802000" />
     </task>
     <servers />
   </component>
