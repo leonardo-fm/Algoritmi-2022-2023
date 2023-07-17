@@ -15,7 +15,7 @@ import priorityqueue.PriorityQueue;
 import priorityqueue.PriorityQueueException;
 
 public class Prim {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, PriorityQueueException {
 		Graph<String, Double> graph = new Graph<>(false, true);
 		loadGraph(graph, args[0]);
 		Collection<? extends AbstractEdge<String, Double>> mst = minimumSpanningForest(graph);
@@ -24,7 +24,7 @@ public class Prim {
 		}
 	}
   	  
-  	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) {
+  	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) throws PriorityQueueException {
 		PriorityQueue<AbstractEdge<V, L>> pq = new PriorityQueue<>(new EdgeDoubleComparator<>());
 		int edgesCount = 0;
 		int vertexCount = 0;
@@ -85,7 +85,7 @@ public class Prim {
   	    System.out.println("Data loaded (" + nOfItems + ")");
   	}
 
-  	private static <V, L extends Number> void addEdgesToPriorityQueue(Graph<V, L> graph, Vertex<V, L> vertex, PriorityQueue<AbstractEdge<V, L>> pq) {
+  	private static <V, L extends Number> void addEdgesToPriorityQueue(Graph<V, L> graph, Vertex<V, L> vertex, PriorityQueue<AbstractEdge<V, L>> pq) throws PriorityQueueException {
   		vertex.setIsVisited(true);
   		Collection<AbstractEdge<V, L>> adjacent = vertex.getEdges();
   		for (AbstractEdge<V, L> edge : adjacent) {

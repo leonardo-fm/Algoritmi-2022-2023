@@ -3,7 +3,7 @@ package priorityqueue;
 import java.util.TreeSet;
 
 /**
- * This calss is used inside the Priority Queue library for the hash map
+ * This class is used inside the Priority Queue library for the hash map
  */
 public class Record<T> {
     /**
@@ -12,14 +12,14 @@ public class Record<T> {
     private T value;
 
     /**
-     * The ammount of istances whit the same value in the hash map
+     * The amount of instance with the same value in the hash map
      */
-    private Integer ammount;
+    private Integer amount;
 
     /**
-     * The index/s of the element/s in the queue
+     * The index/es of the element/s in the queue
      */
-    private TreeSet<Integer> indexs;
+    private TreeSet<Integer> indexes;
 
     /**
      * The key of the item for the hash map
@@ -27,44 +27,37 @@ public class Record<T> {
     private Integer key;
 
     /**
-     * Return a class with the given value, an ammount of 1 and 
+     * Return a class with the given value, an amount of 1 and
      * a key generate using value.hashCode() function
      * @param value: the value given by the user
      */
     public Record(T value, Integer index) {
         this.value = value;
-        this.ammount = 1;
-        this.indexs = new TreeSet<Integer>();
-        (this.indexs).add(index);
+        this.amount = 1;
+        this.indexes = new TreeSet<>();
+        (this.indexes).add(index);
         this.key = value.hashCode();
     }
 
     /**
-     * @retrun the value
+     * @return the amount
      */
-    public T getValue() {
-        return this.value;
-    }
-
-    /**
-     * @return the ammount
-     */
-    public Integer getAmmount() {
-        return this.ammount;
+    public Integer getAmount() {
+        return this.amount;
     }
     
     /**
-     * @param newAmmount: the new ammount to set
+     * @param newAmount: the new amount to set
      */
-    public void setAmmount(Integer newAmmount) {
-        this.ammount = newAmmount;
+    public void setAmount(Integer newAmount) {
+        this.amount = newAmount;
     }
 
     /**
-     * @return the index/s
+     * @return the index/es
      */
-    public TreeSet<Integer> getIndexs() {
-        return this.indexs;
+    public TreeSet<Integer> getIndexes() {
+        return this.indexes;
     }
 
     /**
@@ -75,16 +68,16 @@ public class Record<T> {
     }
 
     /**
-     * @param newIndexs: the new index to add
+     * @param newIndex: the new index to add
      */
     public void addIndex(Integer newIndex) {
-        (this.indexs).add(newIndex);
+        (this.indexes).add(newIndex);
     }
 
     /**
-     * @param indexsToBeRemoved: the new to be removed
+     * @param indexToBeRemoved: the new to be removed
      */
-    public void removeIndex(Integer indexsToBeRemoved) {
-        (this.indexs).remove(indexsToBeRemoved);
+    public void removeIndex(Integer indexToBeRemoved) {
+        (this.indexes).remove(indexToBeRemoved);
     }
 }

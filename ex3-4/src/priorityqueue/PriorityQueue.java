@@ -22,9 +22,9 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @param comparator: a comparator implementing the precedence relation between the queue elements.
    */
   public PriorityQueue(Comparator<? super T> comparator) {
-    this.array = new ArrayList<T>();
+    this.array = new ArrayList<>();
     this.comparator = comparator;
-    this.elementsMap = new HashMap<Integer, Record<T>>();
+    this.elementsMap = new HashMap<>();
   }
  
   /**
@@ -38,20 +38,19 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
  
   /**
    * Push a new element into the queue
-   * @return true iff the item has been push false otherwhise
+   * @return true iff the item has been push false otherwise
    */
   @Override
-  public boolean push(T e) {
-    if (e == null) {
-      return false;
-    }
+  public boolean push(T e) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("push: the value can't be null");
 
     boolean added = (this.array).add(e);
-    if (added == false) return false;
-    int eIndex = (this.array).size() - 1;
-    addToHashMap(e, eIndex);
-
-    bubbleUp(e, eIndex);
+    if (added) {
+      int eIndex = (this.array).size() - 1;
+      addToHashMap(e, eIndex);
+      bubbleUp(e, eIndex);
+    }
     return added;
   }
 
@@ -60,10 +59,9 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @return true iff the element is in the queue false otherwise
    */
   @Override
-  public boolean contains(T e) {
-    if (e == null) {
-      return false;
-    }
+  public boolean contains(T e) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("contains: the value can't be null");
 
     return getFromHashMap(e) != null;
   }
@@ -74,26 +72,24 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    */
   @Override
   public T top() {
-    if (!empty()) {
-      return (this.array).get(0);
-    }
-    return null;
+    if (empty()) return null;
+
+    return (this.array).get(0);
   }
 
   /**
    * Remove the top element in the queue
    */
   @Override
-  public void pop() {
-    if (empty()) {
-      return;
-    }
-    
+  public void pop() throws PriorityQueueException {
+    if (empty()) return;
+
     int lastItemIndex = (this.array).size() - 1;
     swap(0, lastItemIndex);
     removeFromHashMap((this.array).get(lastItemIndex), lastItemIndex);
     (this.array).remove(lastItemIndex);
-    sink(top(), 0);
+    if (lastItemIndex != 0)
+      sink(top(), 0);
   }
 
   /**
@@ -101,29 +97,21 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @return true iff the element has been removed
    */
   @Override
-  public boolean remove(T e) {
-    if (e == null) {
-      return false;
-    }
+  public boolean remove(T e) throws PriorityQueueException {
+    if (e == null || !contains(e))
+      throw new PriorityQueueException("remove: the value can't be null or not in the hashmap");
 
-    if ((this.array).size() == 0 || !contains(e)) {
-      return false;
-    }
-    
     int eIndex = getIndexHashMap(e);
     swap(eIndex, (this.array).size() - 1);
     removeFromHashMap(e, eIndex);
     (this.array).remove((this.array).size() - 1);
-    if (empty()) {
-      return true;
+    if ((this.array).size() > 1) {
+      if (eIndex == 0 || (this.comparator).compare((this.array).get(eIndex), (this.array).get((eIndex - 1) / 2)) >= 0) {
+        sink((this.array).get(eIndex), eIndex);
+      } else {
+        bubbleUp((this.array).get(eIndex), eIndex);
+      }
     }
-
-    if (eIndex == 0 || (this.comparator).compare((this.array).get(eIndex), (this.array).get((eIndex - 1) / 2)) >= 0) {
-      sink((this.array).get(eIndex), eIndex);
-    } else {
-      bubbleUp((this.array).get(eIndex), eIndex);
-    }
-
     return true;
   }
 
@@ -132,7 +120,13 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @param destinationIndex
    * @param sourceIndex
    */
-  private void swap(int destinationIndex, int sourceIndex) {
+  private void swap(int destinationIndex, int sourceIndex) throws PriorityQueueException {
+    int maxIndex = (this.array).size() - 1;
+    if (destinationIndex < 0 || destinationIndex > maxIndex)
+      throw new PriorityQueueException("swap: destinationIndex out of bounds");
+    if (sourceIndex < 0 || sourceIndex > maxIndex)
+      throw new PriorityQueueException("swap: sourceIndex out of bounds");
+
     T tmp = (this.array).get(destinationIndex);
     (this.array).set(destinationIndex, (this.array).get(sourceIndex));
     (this.array).set(sourceIndex, tmp);
@@ -145,10 +139,13 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @param e
    * @param eIndex
    */
-  private void bubbleUp(T e, int eIndex) {
-    if (eIndex == 0 || (this.array).isEmpty()) {
-      return;
-    }
+  private void bubbleUp(T e, int eIndex) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("bubbleUp: the value can't be null");
+    if (eIndex < 0 || eIndex >= (this.array).size())
+      throw new PriorityQueueException("bubbleUp: eIndex out of bounds");
+
+    if (eIndex == 0 || (this.array).isEmpty()) return;
 
     int fatherIndex = (eIndex - 1) / 2;
     if ((this.comparator).compare((this.array).get(fatherIndex), e) > 0) {
@@ -162,25 +159,26 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @param e
    * @param eIndex
    */
-  private void sink(T e, int eIndex) {
-    int leftElementIndex = (eIndex * 2) + 1;
-    int rightElementIndex = leftElementIndex + 1;    
-    if (leftElementIndex >= ((this.array).size() - 1)) {
-      return;
-    }
+  private void sink(T e, int eIndex) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("sink: the value can't be null");
+    if (eIndex < 0 || eIndex >= (this.array).size())
+      throw new PriorityQueueException("sink: eIndex out of bounds");
 
-    T eL = (this.array).get(leftElementIndex);
-    T eR = (this.array).get(rightElementIndex);
-    boolean eGreaterL =  (this.comparator).compare(e, eL) > 0;
-    boolean eGreaterR = (this.comparator).compare(e, eR) > 0;
+    int leftElementIndex = (eIndex * 2) + 1;
+    int rightElementIndex = leftElementIndex + 1;
+    if (leftElementIndex >= ((this.array).size() - 1)) return;
+
+    T leftElement = (this.array).get(leftElementIndex);
+    T rightElement = (this.array).get(rightElementIndex);
+    boolean eGreaterL =  (this.comparator).compare(e, leftElement) > 0;
+    boolean eGreaterR = (this.comparator).compare(e, rightElement) > 0;
     
     if (eGreaterL && eGreaterR) {
-      if ((this.comparator).compare(eL, eR) < 0) {
-        // L is greater or equal then R
+      if ((this.comparator).compare(leftElement, rightElement) < 0) {
         swap(eIndex, leftElementIndex);
         sink(e, leftElementIndex);
       } else {
-        // R is greater of L 
         swap(eIndex, rightElementIndex);
         sink(e, rightElementIndex);
       }
@@ -195,18 +193,23 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
 
   /**
    * Add an element to the hash map 
-   * if element already present add ammount of that item
+   * if element already present add amount of that item
    * @param e
    * @param index index of the element e in the array
    * @return true iff added false otherwise
    */
-  private boolean addToHashMap(T e, int index) {
+  private boolean addToHashMap(T e, int index) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("addToHashMap: the value can't be null");
+    if (index < 0 || index >= (this.array).size())
+      throw new PriorityQueueException("addToHashMap: index out of bounds");
+
     Record<T> record = getFromHashMap(e);
     if (record != null) {
-      record.setAmmount(record.getAmmount() + 1);
+      record.setAmount(record.getAmount() + 1);
       record.addIndex(index);
     } else {
-      record = new Record<T>(e, index);
+      record = new Record<>(e, index);
     }
     elementsMap.put(record.getKey(), record);
     return true;
@@ -214,15 +217,20 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
 
   /**
    * Remove an element from the hash map
-   * if element.ammount > 1 remove 1 to the total ammount
+   * if amount of element > 1 remove 1 to the total amount
    * @param e
    * @param index index of the element e in the array
    * @return true iff removed false otherwise
    */
-  private boolean removeFromHashMap(T e, int index) {
+  private boolean removeFromHashMap(T e, int index) throws PriorityQueueException {
+    if (e == null || !contains(e))
+      throw new PriorityQueueException("removeFromHashMap: the value can't be null or not in the hashmap");
+    if (index < 0 || index >= (this.array).size())
+      throw new PriorityQueueException("removeFromHashMap: index out of bounds");
+
     Record<T> record = getFromHashMap(e);
-    if (record.getAmmount() > 1) {
-      record.setAmmount(record.getAmmount() - 1);
+    if (record.getAmount() > 1) {
+      record.setAmount(record.getAmount() - 1);
       record.removeIndex(index);
       elementsMap.put(record.getKey(), record);
       return true;
@@ -235,9 +243,12 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   /**
    * Return an element from the hash map
    * @param e
-   * @return iff present element T otherwhise null
+   * @return iff present element T otherwise null
    */
-  private Record<T> getFromHashMap(T e) {
+  private Record<T> getFromHashMap(T e) throws PriorityQueueException {
+    if (e == null)
+      throw new PriorityQueueException("getFromHashMap: the value can't be null");
+
     return elementsMap.get(e.hashCode());
   }
 
@@ -247,7 +258,15 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
    * @param oldIndex
    * @param newIndex
    */
-  private void changeIndexHashMap(T e, int oldIndex, int newIndex) {
+  private void changeIndexHashMap(T e, int oldIndex, int newIndex) throws PriorityQueueException {
+    int maxIndex = (this.array).size() - 1;
+    if (e == null || !contains(e))
+      throw new PriorityQueueException("changeIndexHashMap: the value can't be null or not in the hashmap");
+    if (oldIndex < 0 || oldIndex > maxIndex)
+      throw new PriorityQueueException("changeIndexHashMap: oldIndex out of bounds");
+    if (newIndex < 0 || newIndex > maxIndex)
+      throw new PriorityQueueException("changeIndexHashMap: newIndex out of bounds");
+
     Record<T> record = elementsMap.get(e.hashCode());
     record.removeIndex(oldIndex);
     record.addIndex(newIndex);
@@ -256,9 +275,13 @@ public class PriorityQueue<T> implements AbstractQueue<T> {
   /**
    * Return the first index of an element
    * @param e
+   * @return the first index of an item otherwise -1
    */
-  private Integer getIndexHashMap(T e) {
+  private Integer getIndexHashMap(T e) throws PriorityQueueException {
+    if (e == null || !contains(e))
+      throw new PriorityQueueException("getIndexHashMap: the value can't be null or not in the hashmap");
+
     Record<T> record = elementsMap.get(e.hashCode());
-    return (record.getIndexs()).first();
+    return (record.getIndexes()).first();
   }
 }

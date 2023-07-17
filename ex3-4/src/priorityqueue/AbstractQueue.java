@@ -8,17 +8,17 @@ public interface AbstractQueue<T> {
     public boolean empty(); 
     
     // aggiunge un elemento alla coda -- O(logN)
-    public boolean push(T e); 
+    public boolean push(T e) throws PriorityQueueException;
     
     // controlla se un elemento è in coda -- O(1)
-    public boolean contains(T e); 
+    public boolean contains(T e) throws PriorityQueueException;
     
     // accede all'elemento in cima alla coda -- O(1)
     public T top(); 
     
     // rimuove l'elemento in cima alla coda -- O(logN)
-    public void pop(); 
+    public void pop() throws PriorityQueueException;
     
     // rimuove un elemento se presente in coda -- O(logN)
-    public boolean remove(T e); 
+    public boolean remove(T e) throws PriorityQueueException;
   };

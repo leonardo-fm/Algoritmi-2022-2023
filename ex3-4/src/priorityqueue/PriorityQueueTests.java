@@ -22,8 +22,7 @@ public class PriorityQueueTests {
       return i1.compareTo(i2);
     }
   }
-  
-  
+
   private Integer i1, i2, i3, i4;
   private PriorityQueue<Integer> priorityQueue;
   
@@ -159,13 +158,22 @@ public class PriorityQueueTests {
   public void testRemoveNoEl() throws Exception {
     Integer[] expectedArray = { i1 };
     priorityQueue.push(i1);
-    priorityQueue.remove(i3);
+    try {
+      priorityQueue.remove(i3);
+    } catch (PriorityQueueException e) {
+      // OK
+    }
     assertArrayEquals(expectedArray, priorityQueue.array.toArray());
   }
   
   @Test
   public void testRemoveNoElBool() throws Exception {
-    assertFalse(priorityQueue.remove(i1));
+    try {
+      priorityQueue.remove(i1);
+      assertTrue(false);
+    } catch (PriorityQueueException e) {
+      assertTrue(true);
+    }
   }
   
   @Test
