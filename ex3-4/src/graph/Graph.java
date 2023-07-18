@@ -38,10 +38,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if the node has been added, otherwise false
 	 */
 	@Override
-	public boolean addNode(V a) throws GraphException {
-		if (a == null)
-			throw new GraphException("addNode: the value can't be null");
-		if (containsNode(a)) return false;
+	public boolean addNode(V a)  {
+		if (a == null || containsNode(a)) return false;
 		
 		nodes.put(a.hashCode(), new Node<>(a));
 		return true;
@@ -55,13 +53,10 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if the edge has been added, otherwise false
 	 */
 	@Override
-	public boolean addEdge(V a, V b, L l) throws GraphException {
-		if (a == null || b == null)
-			throw new GraphException("addEdge: the values a and b can't be null");
-		if ((labelled && l == null) || (!labelled && l != null))
-			throw new GraphException("addEdge: the label value is against the direct initialization");
-
-		if (containsEdge(a, b))
+	public boolean addEdge(V a, V b, L l) {
+		if (a == null || b == null
+				|| (labelled && l == null) || (!labelled && l != null)
+				|| containsEdge(a, b))
 			return false;
 		
 		Node<V, L> currentNodeA = nodes.get(a.hashCode());
@@ -85,9 +80,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if the node is already in, otherwise false
 	 */
 	@Override
-	public boolean containsNode(V a) throws GraphException {
-		if (a == null)
-			throw new GraphException("containsNode: the value can't be null");
+	public boolean containsNode(V a) {
+		if (a == null) return false;
 
 		return nodes.containsKey(a.hashCode());
 	}
@@ -99,9 +93,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if the edge is already in, otherwise false
 	 */
 	@Override
-	public boolean containsEdge(V a, V b) throws GraphException {
-		if (a == null || b == null)
-			throw new GraphException("containsEdge: the values a and b can't be null");
+	public boolean containsEdge(V a, V b) {
+		if (a == null || b == null) return false;
 
 		Node<V, L> currentNode = nodes.get(a.hashCode());
 		if (currentNode == null) return false;
@@ -115,9 +108,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if success otherwise false
 	 */
 	@Override
-	public boolean removeNode(V a) throws GraphException {
-		if (a == null)
-			throw new GraphException("removeNode: the value can't be null");
+	public boolean removeNode(V a) {
+		if (a == null) return false;
 
 		for (Entry<Integer, Node<V, L>> node : nodes.entrySet()) {
 			Node<V, L> currentNode = node.getValue();
@@ -138,9 +130,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return true if success otherwise false
 	 */
 	@Override
-	public boolean removeEdge(V a, V b) throws GraphException {
-		if (a == null || b == null)
-			throw new GraphException("removeEdge: the values a and b can't be null");
+	public boolean removeEdge(V a, V b) {
+		if (a == null || b == null) return false;
 
 		boolean response = true;
 		
@@ -214,9 +205,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return a collection of adjacent nodes 
 	 */
 	@Override
-	public Collection<V> getNeighbours(V a) throws GraphException {
-		if (a == null)
-			throw new GraphException("getNeighbours: the value can't be null");
+	public Collection<V> getNeighbours(V a) {
+		if (a == null) return null;
 
 		Collection<V> result = new ArrayList<>();
 		Node<V, L> currentNode = nodes.get(a.hashCode());
@@ -235,11 +225,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @return the label L
 	 */
 	@Override
-	public L getLabel(V a, V b) throws GraphException {
-		if (a == null || b == null)
-			throw new GraphException("getLabel: the values a and b can't be null");
-
-		if (!isLabelled()) return null;
+	public L getLabel(V a, V b) {
+		if (a == null || b == null || !isLabelled()) return null;
 		
 		Node<V, L> currentNode = nodes.get(a.hashCode());
 		if (currentNode == null) return null;
@@ -255,9 +242,8 @@ public class Graph<V, L> implements AbstractGraph<V, L> {
 	 * @param a
 	 * @return the node Node<V, L>
 	 */
-	public Node<V, L> getNodeByValue(V a) throws GraphException {
-		if (a == null)
-			throw new GraphException("getNodeByValue: the value can't be null");
+	public Node<V, L> getNodeByValue(V a) {
+		if (a == null) return null;
 
 		return nodes.get(a.hashCode());
 	}

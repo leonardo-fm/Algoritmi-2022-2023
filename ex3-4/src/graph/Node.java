@@ -41,11 +41,8 @@ public class Node<V, L> {
 	 * @param edgeToBeAdded
 	 * @return true if the edge has been added, otherwise false
 	 */
-	public boolean addEdge(AbstractEdge<V, L> edgeToBeAdded) throws GraphException {
-		if (edgeToBeAdded == null)
-			throw new GraphException("addEdge: the edge can't be null");
-
-		if (containsEdgeWith(edgeToBeAdded.getEnd()))
+	public boolean addEdge(AbstractEdge<V, L> edgeToBeAdded) {
+		if (edgeToBeAdded == null || containsEdgeWith(edgeToBeAdded.getEnd()))
 			return false;
 		
 		edges.put(edgeToBeAdded.getEnd().hashCode(), edgeToBeAdded);
@@ -57,9 +54,8 @@ public class Node<V, L> {
 	 * @param endNode
 	 * @return true if the edge is contained in the hashmap, otherwise false
 	 */
-	public boolean containsEdgeWith(V endNode) throws GraphException {
-		if (endNode == null)
-			throw new GraphException("containsEdgeWith: the node can't be null");
+	public boolean containsEdgeWith(V endNode) {
+		if (endNode == null) return false;
 
 		return edges.containsKey(endNode.hashCode());
 	}
@@ -69,9 +65,8 @@ public class Node<V, L> {
 	 * @param b
 	 * @return
 	 */
-	public boolean removeEdgeWith(V b) throws GraphException {
-		if (b == null)
-			throw new GraphException("removeEdgeWith: the value can't be null");
+	public boolean removeEdgeWith(V b) {
+		if (b == null) return false;
 
 		AbstractEdge<V, L> removedEdge = edges.remove(b.hashCode());
 		return removedEdge != null;
@@ -98,9 +93,8 @@ public class Node<V, L> {
 	 * Return the edge
 	 * @return AbstractEdge<V, L>
 	 */
-	public AbstractEdge<V, L> getEdgeWith(V b) throws GraphException {
-		if (b == null)
-			throw new GraphException("getEdgeWith: the value can't be null");
+	public AbstractEdge<V, L> getEdgeWith(V b) {
+		if (b == null) return null;
 
 		return edges.get(b.hashCode());
 	}

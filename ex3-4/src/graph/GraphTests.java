@@ -546,24 +546,14 @@ public class GraphTests {
 	public void testNoIsLabelledInsertValue() throws Exception {
 		graph.addNode(v1.getItem());
 		graph.addNode(v2.getItem());
-		try {
-			graph.addEdge(v1.getItem(), v2.getItem(), 8);
-			assertTrue(false);
-		} catch (GraphException e) {
-			assertTrue(true);
-		}
+		assertFalse(graph.addEdge(v1.getItem(), v2.getItem(), 8));
 	}
 
 	@Test
 	public void testIsLabelledInsertNull() throws Exception {
 		graphL.addNode(v1.getItem());
 		graphL.addNode(v2.getItem());
-		try {
-			graphL.addEdge(v1.getItem(), v2.getItem(), null);
-			assertTrue(false);
-		} catch (GraphException e) {
-			assertTrue(true);
-		}
+		assertFalse(graphL.addEdge(v1.getItem(), v2.getItem(), null));
 	}
 
 	@Test

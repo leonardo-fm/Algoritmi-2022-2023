@@ -4,17 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4fe5ee0e-0f2c-4b38-8aaa-2c15e4ec8ee5" name="Changes" comment="">
+    <list default="true" id="5b7af886-ad3e-4578-9329-465f7974c725" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../ex1/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/README.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../ex2/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/README.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex1/src/sorted_array_main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../ex1/src/sorted_array_main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../ex2/src/skip_list_main.c" beforeDir="false" afterPath="$PROJECT_DIR$/../ex2/src/skip_list_main.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.txt" beforeDir="false" afterPath="$PROJECT_DIR$/README.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Prim.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Prim.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/graph/AbstractGraph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/AbstractGraph.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/Edge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Edge.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/graph/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Graph.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/GraphException.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/graph/GraphTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/GraphTests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/graph/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/graph/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/graph/Node.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/priorityqueue/AbstractQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/AbstractQueue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/priorityqueue/PriorityQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/PriorityQueue.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/priorityqueue/PriorityQueueException.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/priorityqueue/PriorityQueueTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/priorityqueue/PriorityQueueTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,47 +30,37 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectId" id="2ScskySXsJc9hJeGKMiDbiqcEj0" />
+  <component name="ProjectId" id="2SkOSCkpDgfkJ6fYecvucgAo8Yl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="4fe5ee0e-0f2c-4b38-8aaa-2c15e4ec8ee5" name="Changes" comment="" />
-      <created>1689457353493</created>
+      <changelist id="5b7af886-ad3e-4578-9329-465f7974c725" name="Changes" comment="" />
+      <created>1689687113955</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1689457353493</updated>
-      <workItem from="1689457357406" duration="1480000" />
-      <workItem from="1689495043497" duration="5648000" />
-      <workItem from="1689582043844" duration="6802000" />
+      <updated>1689687113955</updated>
+      <workItem from="1689687117563" duration="4524000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

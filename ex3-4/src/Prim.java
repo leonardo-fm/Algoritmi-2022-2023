@@ -10,13 +10,11 @@ import java.util.Iterator;
 
 import graph.AbstractEdge;
 import graph.Graph;
-import graph.GraphException;
 import graph.Node;
 import priorityqueue.PriorityQueue;
-import priorityqueue.PriorityQueueException;
 
 public class Prim {
-	public static void main(String[] args) throws IOException, PriorityQueueException, GraphException {
+	public static void main(String[] args) throws IOException {
 		if (args.length > 2) throw new IllegalArgumentException("Too many arguments");
 		if (args.length == 1) args = new String[]{args[0], "False"};
 		Graph<String, Double> graph = new Graph<>(false, true);
@@ -29,7 +27,7 @@ public class Prim {
 		}
 	}
   	  
-  	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) throws PriorityQueueException, GraphException {
+  	public static <V, L extends Number> Collection<? extends AbstractEdge<V, L>> minimumSpanningForest(Graph<V, L> graph) {
 		PriorityQueue<AbstractEdge<V, L>> pq = new PriorityQueue<>(new EdgeDoubleComparator<>());
 		int edgesCount = 0;
 		int nodeCount = 0;
@@ -72,7 +70,7 @@ public class Prim {
 		return response;
   	}
   	
-  	private static void loadGraph(Graph<String, Double> graph, String filePath) throws IOException, GraphException {
+  	private static void loadGraph(Graph<String, Double> graph, String filePath) throws IOException {
   		System.out.println("Loading data from file...");
 		int nOfItems = 0;
   		Path inputFilePath = Paths.get(filePath);
@@ -90,7 +88,7 @@ public class Prim {
   	    System.out.println("Data loaded (" + nOfItems + ")");
   	}
 
-  	private static <V, L extends Number> void addEdgesToPriorityQueue(Graph<V, L> graph, Node<V, L> node, PriorityQueue<AbstractEdge<V, L>> pq) throws PriorityQueueException, GraphException {
+  	private static <V, L extends Number> void addEdgesToPriorityQueue(Graph<V, L> graph, Node<V, L> node, PriorityQueue<AbstractEdge<V, L>> pq) {
   		node.setIsVisited(true);
   		Collection<AbstractEdge<V, L>> adjacent = node.getEdges();
   		for (AbstractEdge<V, L> edge : adjacent) {

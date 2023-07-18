@@ -1,6 +1,8 @@
 package priorityqueue;
 
 import java.util.Comparator;
+import java.util.Random;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,9 +27,11 @@ public class PriorityQueueTests {
 
   private Integer i1, i2, i3, i4;
   private PriorityQueue<Integer> priorityQueue;
+
+  private int randomValues[] = {52, 8, -9, 35, 15, 68, 6, 18, 78, 88, 45, 14, 56, 156, 15, 165};
   
   @Before
-  public void createPriorityQueue() throws PriorityQueueException {
+  public void createPriorityQueue() {
     i1 = 1;
     i2 = 3;
     i3 = 5;
@@ -158,22 +162,13 @@ public class PriorityQueueTests {
   public void testRemoveNoEl() throws Exception {
     Integer[] expectedArray = { i1 };
     priorityQueue.push(i1);
-    try {
-      priorityQueue.remove(i3);
-    } catch (PriorityQueueException e) {
-      // OK
-    }
+    priorityQueue.remove(i3);
     assertArrayEquals(expectedArray, priorityQueue.array.toArray());
   }
   
   @Test
   public void testRemoveNoElBool() throws Exception {
-    try {
-      priorityQueue.remove(i1);
-      assertTrue(false);
-    } catch (PriorityQueueException e) {
-      assertTrue(true);
-    }
+    assertFalse(priorityQueue.remove(i1));
   }
   
   @Test
@@ -189,5 +184,136 @@ public class PriorityQueueTests {
     priorityQueue.push(i2);
     priorityQueue.remove(i2);
     assertTrue(priorityQueue.contains(i2));
+  }
+
+  //{52, 8, -9, 35, 15, 68, 6, 18, 78, 88, 45, 14, 56, 156, 15, 165}
+  @Test
+  public void testAddLotOfNumber() throws Exception {
+    for (int i = 0; i < randomValues.length; i++) {
+      priorityQueue.push(randomValues[i]);
+    }
+    assertEquals(-9, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddLotOfNumberAndLowerAfter() throws Exception {
+    for (int i = 0; i < randomValues.length; i++) {
+      priorityQueue.push(randomValues[i]);
+    }
+    priorityQueue.push(-100);
+    assertEquals(-100, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddLotOfNumberAndPop() throws Exception {
+    for (int i = 0; i < randomValues.length; i++) {
+      priorityQueue.push(randomValues[i]);
+    }
+    priorityQueue.pop();
+    priorityQueue.pop();
+    assertEquals(8, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddLotOfNumberAndSameLower() throws Exception {
+    for (int i = 0; i < randomValues.length; i++) {
+      priorityQueue.push(randomValues[i]);
+    }
+    priorityQueue.push(-9);
+    assertEquals(-9, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddLotOfNumberAndSameLowerAndPop() throws Exception {
+    for (int i = 0; i < randomValues.length; i++) {
+      priorityQueue.push(randomValues[i]);
+    }
+    priorityQueue.push(-9);
+    priorityQueue.pop();
+    assertEquals(-9, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers10() throws Exception {
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    for (int i = 0; i < 10; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers100() throws Exception {
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    for (int i = 0; i < 100; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers1000() throws Exception {
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    for (int i = 0; i < 1000; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers10000() throws Exception {
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    for (int i = 0; i < 10000; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers10000AndRemoveRandom100() throws Exception {
+    int numberToBeDeleted[] = new int[100];
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    int j = 0;
+    for (int i = 0; i < 10000; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      else if (j < numberToBeDeleted.length) numberToBeDeleted[j++] = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    for (int i = 0; i < numberToBeDeleted.length; i++) {
+      priorityQueue.remove(numberToBeDeleted[i]);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
+  }
+
+  @Test
+  public void testAddRandomNumbers500000AndRemoveRandom10000() throws Exception {
+    int numberToBeDeleted[] = new int[10000];
+    int minNumber = Integer.MAX_VALUE;
+    Random random = new Random();
+    int j = 0;
+    for (int i = 0; i < 500000; i++) {
+      int currentNumber = random.nextInt();
+      if (currentNumber < minNumber) minNumber = currentNumber;
+      else if (j < numberToBeDeleted.length) numberToBeDeleted[j++] = currentNumber;
+      priorityQueue.push(currentNumber);
+    }
+    for (int i = 0; i < numberToBeDeleted.length; i++) {
+      priorityQueue.remove(numberToBeDeleted[i]);
+    }
+    assertEquals(minNumber, (int)priorityQueue.top());
   }
 }
