@@ -5,7 +5,7 @@ import java.util.TreeSet;
 /**
  * This class is used inside the Priority Queue library for the hash map
  */
-public class Record<T> {
+public class PQItem<T> {
     /**
      * The value of the Generic<T> given by the user
      */
@@ -31,7 +31,7 @@ public class Record<T> {
      * a key generate using value.hashCode() function
      * @param value: the value given by the user
      */
-    public Record(T value, Integer index) {
+    public PQItem(T value, Integer index) {
         this.value = value;
         this.amount = 1;
         this.indexes = new TreeSet<>();
